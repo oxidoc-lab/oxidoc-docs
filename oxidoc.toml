@@ -1,0 +1,16 @@
+[project]
+name = "Oxidoc"
+logo = "/assets/logo.svg"
+debug_islands = false
+edit_url = "https://github.com/oxidoc-lab/oxidoc-docs/blob/main/docs"
+
+[theme]
+primary = "#3b82f6"
+dark_mode = "system"
+
+[routing]
+homepage = "intro"
+navigation = [{ group = "Getting Started", pages = ["intro", "quickstart"] }]
+
+[footer]
+copyright_owner = "Oxidoc"
