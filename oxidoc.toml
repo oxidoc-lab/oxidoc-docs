@@ -1,16 +1,60 @@
 [project]
 name = "Oxidoc"
+description = "A documentation engine written in Rust. Zero Node.js. Sub-second builds. Interactive Wasm islands."
 logo = "/assets/logo.svg"
-debug_islands = false
+base_url = "https://oxidoc-lab.github.io"
 edit_url = "https://github.com/oxidoc-lab/oxidoc-docs/blob/main/docs"
 
 [theme]
 primary = "#3b82f6"
 dark_mode = "system"
 
+[routing.root]
+homepage = "home.rdx"
+# pages = ["about.rdx", "contact.rdx"]
+
 [routing]
-homepage = "intro"
-navigation = [{ group = "Getting Started", pages = ["intro", "quickstart"] }]
+header_links = [
+  { label = "Docs", href = "/docs" },
+  { label = "Lib", href = "/lib" },
+  { label = "API", href = "/api" },
+]
+navigation = [
+  { path = "/docs", dir = "docs", groups = [
+    { group = "Getting Started", pages = [
+      "quickstart",
+      "api-reference",
+      "advanced",
+    ] },
+    { group = "Guides", pages = [
+      "guides/styling",
+      "guides/animations",
+      "guides/custom-components",
+    ] },
+    { group = "Deployment", pages = [
+      "deployment",
+      "deployment/github-pages",
+      "deployment/vercel",
+      "deployment/netlify",
+    ] },
+  ] },
+  { path = "/lib", dir = "lib", groups = [
+    { group = "Library API", pages = [
+      "index",
+      "manual-api",
+      "library-example",
+    ] },
+  ] },
+  { path = "/api", openapi = "./openapi.yaml" },
+]
+
+[search]
+# semantic = true
+
+[social]
+github = "https://github.com/oxidoc-lab/oxidoc"
+discord = "https://discord.gg/CGHU4TR7Zb"
 
 [footer]
 copyright_owner = "Oxidoc"
+# copyright_owner_url = "https://github.com/oxidoc-lab"
