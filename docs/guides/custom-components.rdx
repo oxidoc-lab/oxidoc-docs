@@ -1,0 +1,55 @@
+---
+title: Custom Web Components
+---
+
+# Custom Web Components
+
+Oxidoc lets you register Vanilla JS Web Components as an escape hatch for UI that doesn't need the Wasm pipeline.
+
+## Configuration
+
+Map component tag names to JavaScript file paths in `oxidoc.toml`:
+
+<CodeBlock language="toml" filename="oxidoc.toml">
+[components.custom]
+PromoBanner = "assets/js/promo-banner.js"
+FeedbackWidget = "assets/js/feedback-widget.js"
+</CodeBlock>
+
+## Writing a Component
+
+Each JS file should define and register an HTML Custom Element:
+
+<CodeBlock language="javascript" filename="assets/js/promo-banner.js">
+class PromoBanner extends HTMLElement {
+  connectedCallback() {
+    const message = this.getAttribute('message') || 'Check this out!';
+    this.innerHTML = `<div class="promo-banner">${message}</div>`;
+  }
+}
+
+customElements.define('promo-banner', PromoBanner);
+</CodeBlock>
+
+## Using in RDX
+
+Use the component tag in your `.rdx` files just like any built-in component:
+
+<CodeBlock language="markdown" filename="docs/intro.rdx">
+<PromoBanner message="New release available!" />
+</CodeBlock>
+
+<Callout kind="info">
+Custom components bypass the Wasm hydration pipeline entirely. Oxidoc renders the HTML element directly and loads your JS file with `<script type="module" async>`.
+</Callout>
+
+## When to Use
+
+<CardGrid columns="2">
+<Card title="Use Custom Components" description="Quick UI experiments, third-party widget wrappers, simple interactive elements that don't need Leptos reactivity." />
+<Card title="Use Built-in Components" description="Rich interactivity with ARIA keyboard navigation, Shadow DOM isolation, and full Leptos reactivity." />
+</CardGrid>
+
+## Attributes
+
+All attributes you pass to the component in RDX are forwarded as HTML attributes on the custom element. Your JS `connectedCallback` can read them with `this.getAttribute()`.

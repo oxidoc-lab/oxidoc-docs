@@ -1,0 +1,35 @@
+---
+title: Welcome to Oxidoc
+layout: landing
+---
+
+<Hero title="Oxidoc">
+<HeroAction label="Get Started" href="/docs/quickstart" variant="primary" />
+<HeroAction label="View on GitHub" href="https://github.com/oxidoc-lab/oxidoc" variant="secondary" />
+
+A documentation engine written in Rust. Zero Node.js dependency. Sub-second builds. Interactive WebAssembly islands.
+</Hero>
+
+<Section bg="muted">
+<FeatureGrid>
+<Feature icon="⚡" title="Fast Builds">
+Sub-second builds for thousands of pages with incremental rebuilds.
+</Feature>
+<Feature icon="🧩" title="Interactive Islands">
+Wasm-powered components like tabs, code blocks, and API playgrounds.
+</Feature>
+<Feature icon="🔍" title="Search Built-in">
+BM25 lexical search out of the box, with optional semantic search for better recall.
+</Feature>
+<Feature icon="📦" title="Zero Config">
+Works out of the box with sensible defaults. Customize when you need to.
+</Feature>
+</FeatureGrid>
+</Section>
+
+<Section>
+<CTA title="Ready to build?" description="Get started with Oxidoc in under a minute.">
+<HeroAction label="Quickstart Guide" href="/docs/quickstart" variant="primary" />
+<HeroAction label="API Reference" href="/docs/api-reference" variant="secondary" />
+</CTA>
+</Section>
