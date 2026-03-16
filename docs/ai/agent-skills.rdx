@@ -134,11 +134,13 @@ Files use `.rdx` extension (NOT `.md` or `.mdx`). YAML frontmatter + Markdown + 
 
 ### Frontmatter
 
+Every `.rdx` page requires `title` and `description`:
+
 ```yaml
 ---
 title: Page Title
 description: Meta description for SEO (150-160 chars)
-layout: landing  # Optional: removes sidebar
+layout: landing  # Optional: full-width, no sidebar — for landing/marketing pages
 ---
 ```
 
@@ -150,9 +152,9 @@ All components use PascalCase.
 
 | Component | Usage |
 |-----------|-------|
-| Callout | `<Callout kind="info\|warning\|error\|tip" title="T">text</Callout>` |
+| Callout | `<Callout kind="info\|warning\|error\|tip" title="T">text</Callout>` (aliases: `error`=`danger`, `tip`=`success`) |
 | Tabs | `<Tabs><Tab title="A">content</Tab><Tab title="B">content</Tab></Tabs>` |
-| CodeBlock | `<CodeBlock language="rust" filename="main.rs" highlight="2">code</CodeBlock>` |
+| CodeBlock | `<CodeBlock language="rust" filename="main.rs" highlight="2">code</CodeBlock>` (only when you need filename/highlight/line_numbers) |
 | Accordion | `<Accordion title="Label">hidden content</Accordion>` |
 | CardGrid | `<CardGrid><Card title="T" icon="icon" href="/url">desc</Card></CardGrid>` |
 | Steps | `<Steps><Step title="First">content</Step></Steps>` |
@@ -166,7 +168,7 @@ All components use PascalCase.
 
 ### Landing Page Components
 
-Set `layout: landing` in frontmatter, then use:
+Set `layout: landing` in frontmatter (full-width, no sidebar), then use:
 
 | Component | Usage |
 |-----------|-------|
@@ -215,15 +217,43 @@ navigation = [
 
 ### Navigation Rules
 
-- `path` = URL prefix, `dir` = content directory for `.rdx` files
-- `groups` = sidebar sections with `group` (title) and `pages` (slug list)
-- `openapi` = path to OpenAPI spec (auto-generates API pages)
-- Pages only appear in sidebar if listed in navigation groups
-- Nested: `"guides/styling"` maps to `docs/guides/styling.rdx`
+- `path` = URL prefix (e.g., `"/docs"`), `dir` = content directory containing `.rdx` files
+- `pages` = list of slugs — the filename without `.rdx` (e.g., `"quickstart"` → `docs/quickstart.rdx`)
+- `groups` = sidebar sections with `group` (display title) and `pages` (slug list)
+- `openapi` = path to an OpenAPI/Swagger spec file — Oxidoc auto-generates interactive API reference pages from it
+- Pages only appear in the sidebar if listed in a navigation group
+- Nested slugs: `"guides/styling"` maps to `docs/guides/styling.rdx`
 
 ## Theming
 
-Override in custom CSS. All built-in styles use `@layer oxidoc` — your CSS always wins.
+### Quick theming via oxidoc.toml
+
+Set colors and fonts in `[theme]`. For deeper customization, create a CSS file and register it:
+
+```toml
+[theme]
+primary = "#3b82f6"
+accent = "#f59e0b"
+dark_mode = "system"  # controls toggle: "system", "light", or "dark"
+custom_css = ["assets/custom.css"]  # path relative to project root
+```
+
+The CSS file goes in `assets/` (e.g., `assets/custom.css`). Everything in `assets/` is copied to `dist/` on build.
+
+### CSS variable overrides
+
+All built-in styles use `@layer oxidoc`, so your custom CSS always wins — no `!important` needed. Override variables in `:root` (or scope to dark mode with `[data-theme="dark"]`):
+
+```css
+/* assets/custom.css */
+:root {
+  --oxidoc-primary: #2563eb;
+  --oxidoc-accent: #f59e0b;
+}
+[data-theme="dark"] {
+  --oxidoc-primary: #3b82f6;
+}
+```
 
 | Category | Variables |
 |----------|-----------|
@@ -232,19 +262,19 @@ Override in custom CSS. All built-in styles use `@layer oxidoc` — your CSS alw
 | Typography | `--oxidoc-font-sans`, `--oxidoc-font-mono` |
 | Layout | `--oxidoc-content-max` (48rem), `--oxidoc-sidebar-width` (16rem), `--oxidoc-toc-width` (14rem), `--oxidoc-header-height` (3.5rem) |
 
-Dark mode: override in `[data-theme="dark"]` selector. Primary shades auto-generate via `color-mix()`.
-
 ## Project Structure
 
 ```
 project/
-├── oxidoc.toml        # Configuration
+├── oxidoc.toml        # Site configuration (required)
 ├── home.rdx           # Landing page (layout: landing)
-├── assets/            # Static assets (copied to dist/)
-├── docs/              # Content directory
-│   ├── intro.rdx
+├── assets/            # Static files — copied as-is to dist/ on build
+│   ├── logo.svg       #   referenced in config as "/assets/logo.svg"
+│   └── custom.css     #   registered via [theme] custom_css
+├── docs/              # Content directory (matches routing dir)
+│   ├── intro.rdx      #   slug: "intro"
 │   └── advanced/
-│       └── plugins.rdx
+│       └── plugins.rdx  # slug: "advanced/plugins"
 └── i18n/              # Translation files (if i18n enabled)
     └── en.ftl
 ```
@@ -278,13 +308,13 @@ RDX files are Markdown with YAML frontmatter and embedded components. Extension:
 
 ## Frontmatter
 
-Every page requires `title` and `description`:
+Every `.rdx` page requires `title` and `description`:
 
 ```yaml
 ---
 title: Page Title — Descriptive Hook | Brand
 description: 150-160 char meta description with action verb and CTA.
-layout: landing  # Optional: removes sidebar
+layout: landing  # Optional: full-width, no sidebar — for landing/marketing pages
 ---
 ```
 
@@ -296,9 +326,9 @@ All components use PascalCase.
 
 | Component | Usage |
 |-----------|-------|
-| Callout | `<Callout kind="info\|warning\|error\|tip" title="T">text</Callout>` |
+| Callout | `<Callout kind="info\|warning\|error\|tip" title="T">text</Callout>` (aliases: `error`=`danger`, `tip`=`success`) |
 | Tabs | `<Tabs><Tab title="A">content</Tab></Tabs>` |
-| CodeBlock | `<CodeBlock language="rust" filename="main.rs" highlight="2">code</CodeBlock>` |
+| CodeBlock | `<CodeBlock language="rust" filename="main.rs" highlight="2">code</CodeBlock>` (only when you need filename/highlight/line_numbers) |
 | Accordion | `<Accordion title="Label">hidden content</Accordion>` |
 | CardGrid | `<CardGrid><Card title="T" icon="icon" href="/url">desc</Card></CardGrid>` |
 | Steps | `<Steps><Step title="First">content</Step></Steps>` |
@@ -437,11 +467,12 @@ navigation = [
 
 ## Navigation Rules
 
-- `path` = URL prefix, `dir` = content directory for `.rdx` files
-- `groups` = sidebar sections with `group` (title) and `pages` (slug list)
-- `openapi` = path to OpenAPI spec (auto-generates API pages)
-- Pages only appear in sidebar if listed in navigation groups
-- Nested: `"guides/styling"` maps to `docs/guides/styling.rdx`
+- `path` = URL prefix (e.g., `"/docs"`), `dir` = content directory containing `.rdx` files
+- `pages` = list of slugs — the filename without `.rdx` (e.g., `"quickstart"` → `docs/quickstart.rdx`)
+- `groups` = sidebar sections with `group` (display title) and `pages` (slug list)
+- `openapi` = path to OpenAPI/Swagger spec — auto-generates interactive API reference pages
+- Pages only appear in sidebar if listed in a navigation group
+- Nested slugs: `"guides/styling"` maps to `docs/guides/styling.rdx`
 </CodeBlock>
 
 </Accordion>
@@ -466,19 +497,40 @@ Oxidoc uses CSS custom properties (`--oxidoc-*`) for all visual styling. All bui
 
 **Keywords**: theme, CSS variables, dark mode, colors, typography, layout, custom CSS, styling, branding
 
-## Config (oxidoc.toml)
+## Quick Theming (oxidoc.toml)
+
+Set colors, fonts, and dark mode toggle behavior in `[theme]`:
 
 ```toml
 [theme]
-primary = "#3b82f6"
-accent = "#f59e0b"
+primary = "#3b82f6"        # Primary brand color
+accent = "#f59e0b"         # Accent color for highlights
 font = "Inter, sans-serif"
 code_font = "JetBrains Mono, monospace"
-dark_mode = "system"  # "system" | "light" | "dark"
-custom_css = ["assets/custom.css"]
+dark_mode = "system"       # "system" (follows OS), "light", or "dark"
+custom_css = ["assets/custom.css"]  # paths relative to project root
 ```
 
-## CSS Variables
+## Custom CSS Setup
+
+1. Create a CSS file in `assets/` (e.g., `assets/custom.css`) — this directory is copied to `dist/` on build
+2. Register it in `oxidoc.toml` via `custom_css = ["assets/custom.css"]`
+3. Override any `--oxidoc-*` variable in `:root` or scope to dark mode with `[data-theme="dark"]`
+
+All built-in styles use `@layer oxidoc`, so your CSS always wins — no `!important` needed.
+
+```css
+/* assets/custom.css */
+:root {
+  --oxidoc-primary: #2563eb;
+  --oxidoc-font-sans: "My Font", sans-serif;
+}
+[data-theme="dark"] {
+  --oxidoc-primary: #3b82f6;
+}
+```
+
+## CSS Variables Reference
 
 | Category | Variables |
 |----------|-----------|
@@ -491,15 +543,10 @@ custom_css = ["assets/custom.css"]
 | Shadows | `--oxidoc-shadow-sm`, `--oxidoc-shadow-md`, `--oxidoc-shadow-lg` |
 | Z-index | `--oxidoc-z-tooltip` (10), `z-back-to-top` (50), `z-sidebar` (90), `z-header` (100), `z-skip-nav` (200), `z-overlay` (1000) |
 | Transitions | `--oxidoc-transition-fast`, `--oxidoc-transition-normal`, `--oxidoc-transition-slow`, `--oxidoc-transition-spring` |
-  
+
 ## Dark Mode
 
-Override variables in `[data-theme="dark"]`. Primary shades auto-generate via `color-mix()`.
-
-```css
-:root { --oxidoc-primary: #2563eb; }
-[data-theme="dark"] { --oxidoc-primary: #3b82f6; }
-```
+The `dark_mode` setting in `oxidoc.toml` controls the toggle behavior (system/light/dark). To customize dark mode colors, override CSS variables under `[data-theme="dark"]` in your custom CSS file. Primary shades auto-generate via `color-mix()` — you only need to set the base color.
 </CodeBlock>
 
 </Accordion>
