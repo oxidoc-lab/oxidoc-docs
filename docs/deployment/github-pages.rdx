@@ -1,5 +1,6 @@
 ---
-title: GitHub Pages
+title: Deploy to GitHub Pages — Free Hosting with CI/CD | Oxidoc
+description: Deploy your Oxidoc site to GitHub Pages with GitHub Actions. Free hosting, automatic builds on push, and custom domain support.
 ---
 
 # GitHub Pages
@@ -31,10 +32,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Install Oxidoc
-        run: cargo install oxidoc-cli
+        run: curl -fsSL https://raw.githubusercontent.com/oxidoc-lab/oxidoc/main/install.sh | sh
 
       - name: Build site
         run: oxidoc build

@@ -1,0 +1,243 @@
+---
+title: Semantic Search — AI-Powered Conceptual Search | Oxidoc
+description: Enable semantic search in Oxidoc to understand the meaning behind queries. Uses sentence embeddings and cosine similarity — runs in-browser via Wasm, no API keys.
+---
+
+# Semantic Search
+
+Semantic search uses a sentence embedding model to understand the *meaning* of queries, not just keyword matches. When a user searches for "how do I change colors", it finds the theming page even if it never uses the word "colors".
+
+## Enable Semantic Search
+
+<CodeBlock language="toml" filename="oxidoc.toml">
+[search]
+semantic = true
+</CodeBlock>
+
+That's it. Oxidoc bundles a default embedding model — no downloads, no API keys, no external services.
+
+## How It Works
+
+### Build Time
+
+1. Oxidoc loads the embedding model (bundled BGE Micro v2 or your custom model)
+2. Every page's text content is embedded into a 384-dimensional vector
+3. The vectors are written to `search-vectors.json` in the output
+4. The model file is copied to `search-model.gguf` in the output
+
+### Query Time (In Browser)
+
+1. The browser fetches the model file and pre-computed vectors
+2. The model initializes in Wasm (CPU-only, no GPU)
+3. When the user triggers semantic search, the query text is embedded in real-time
+4. Cosine similarity is computed between the query vector and all page vectors
+5. Results are ranked by similarity and merged with lexical results via RRF
+
+All computation happens in the browser. No data leaves the user's machine.
+
+## Hybrid Ranking
+
+When semantic search is enabled, Oxidoc runs **both** engines on every "Ask AI" query and merges results using **Reciprocal Rank Fusion (RRF)**:
+
+```mermaid
+graph LR
+    Q[User Query] --> L[Lexical / BM25]
+    Q --> S[Semantic / Cosine Similarity]
+    L --> F[RRF Fusion]
+    S --> F
+    F --> R[Ranked Results]
+```
+
+| Engine | Weight | Strengths |
+|:-------|:-------|:----------|
+| Lexical (BM25) | **70%** | Exact terms, function names, config keys, error messages |
+| Semantic | **30%** | Conceptual queries, synonyms, "how do I..." questions, paraphrasing |
+
+Pages appearing in both result sets get combined scores. A page that matches keywords *and* is semantically relevant ranks highest.
+
+### Why 70/30?
+
+Documentation search is keyword-heavy — users often search for exact function names, config fields, or error messages. The 70% lexical weight ensures these exact matches always surface. The 30% semantic weight adds recall for conceptual queries without drowning out precise keyword results.
+
+## The Default Model
+
+Oxidoc bundles **BGE Micro v2** — a compact sentence embedding model by BAAI:
+
+| Property | Value |
+|:---------|:------|
+| Model | [BAAI/bge-micro-v2](https://huggingface.co/aapot/bge-micro-v2-GGUF) |
+| Format | GGUF (model + tokenizer in one file) |
+| Size | 17.5 MB |
+| Dimensions | 384 |
+| Runtime | CPU-only (no GPU required) |
+| Language | English (primary) |
+
+### Why This Model?
+
+<CardGrid columns="2">
+<Card title="Small enough to bundle" icon="📦">
+At 17.5 MB, the model is embedded directly in the Oxidoc binary. No download step during install or build.
+</Card>
+<Card title="Small enough for browsers" icon="🌐">
+The same 17.5 MB file is served to browsers for query-time inference. Users don't wait for a 500 MB download before search works.
+</Card>
+<Card title="Good quality for docs" icon="✅">
+BGE Micro v2 produces high-quality embeddings for English technical content — documentation, tutorials, API references.
+</Card>
+<Card title="CPU-only inference" icon="⚡">
+Runs on any device. No GPU, no WebGPU, no special hardware. Works on phones, tablets, old laptops.
+</Card>
+</CardGrid>
+
+### Limitations
+
+- **Optimized for English** — for non-English documentation, use a [custom model](/docs/ai/custom-models)
+- **384 dimensions** — larger models with higher dimensions may capture more nuance, at the cost of size
+- **17.5 MB browser download** — users on slow connections may experience a delay before semantic search is available (lexical search works immediately while the model loads)
+
+## Build-Time vs Query-Time
+
+| Phase | What Happens | Time |
+|:------|:-------------|:-----|
+| **Build** | Embed all pages, write vectors + copy model | Seconds (CPU) |
+| **Page load** | Fetch `search-meta.bin` | Instant (~20 KB) |
+| **Semantic init** | Fetch model (17.5 MB) + vectors | 1–3 seconds |
+| **Regular search** | BM25 only (no model needed) | <10 ms |
+| **AI search** | Embed query + cosine similarity + RRF fusion | 50–200 ms |
+
+<Callout kind="info" title="Progressive enhancement">
+Lexical search is available immediately on page load. Semantic search becomes available once the model finishes loading in the background. Users are never blocked — they can search right away with keywords while the model downloads.
+</Callout>
+
+## Configuration Reference
+
+<CodeBlock language="toml" filename="oxidoc.toml">
+[search]
+# Enable semantic search (default: false)
+semantic = true
+
+# Custom GGUF model (overrides bundled BGE Micro v2)
+# model_path = "./models/my-model.gguf"
+</CodeBlock>
+
+| Field | Type | Default | Description |
+|:------|:-----|:--------|:------------|
+| `semantic` | bool | `false` | Enable semantic search alongside BM25 |
+| `model_path` | String | — | Path to a custom GGUF embedding model |
+
+When `model_path` is set, Oxidoc uses your model instead of the bundled one. See [Custom Models](/docs/ai/custom-models) for details.
+
+## Embedding Output Format
+
+When semantic search is enabled, `oxidoc build` writes `search-vectors.json` to your output directory. This is a plain JSON file containing every page's embedding:
+
+<CodeBlock language="json" filename="dist/search-vectors.json">
+{
+  "dimension": 384,
+  "documents": [
+    {
+      "id": 0,
+      "title": "Installation",
+      "path": "/docs/installation",
+      "snippet": "Install Oxidoc with a single command on Linux, macOS, or Windows...",
+      "text": "The recommended way to install Oxidoc is the install script...",
+      "headings": [
+        { "title": "Install Script", "anchor": "install-script", "depth": 2, "offset": 0 },
+        { "title": "GitHub Releases", "anchor": "github-releases", "depth": 2, "offset": 312 }
+      ]
+    }
+  ],
+  "vectors": [
+    [0.0231, -0.0412, 0.0889, "... 384 floats total ..."]
+  ]
+}
+</CodeBlock>
+
+Each entry in `vectors` corresponds to the document at the same index in `documents`. The vectors are 32-bit floats, one per dimension (384 for the default model).
+
+### Using Embeddings in Your Own RAG Pipeline
+
+The `search-vectors.json` file is a portable artifact you can use outside of Oxidoc. After running `oxidoc build`, copy the file and feed it into any vector database or RAG pipeline:
+
+<Tabs>
+<Tab title="Python (NumPy)">
+<CodeBlock language="python">
+import json
+import numpy as np
+
+with open("dist/search-vectors.json") as f:
+    data = json.load(f)
+
+vectors = np.array(data["vectors"], dtype=np.float32)
+docs = data["documents"]
+
+# Compute cosine similarity with a query embedding
+query = your_model.encode("how do I configure search?")
+similarities = vectors @ query / (np.linalg.norm(vectors, axis=1) * np.linalg.norm(query))
+
+# Top 5 results
+top_indices = np.argsort(similarities)[::-1][:5]
+for idx in top_indices:
+    print(f"{docs[idx]['title']}: {similarities[idx]:.4f}")
+</CodeBlock>
+</Tab>
+<Tab title="Python (ChromaDB)">
+<CodeBlock language="python">
+import json
+import chromadb
+
+with open("dist/search-vectors.json") as f:
+    data = json.load(f)
+
+client = chromadb.Client()
+collection = client.create_collection("docs")
+
+collection.add(
+    ids=[str(d["id"]) for d in data["documents"]],
+    embeddings=data["vectors"],
+    documents=[d["text"] for d in data["documents"]],
+    metadatas=[{"title": d["title"], "path": d["path"]} for d in data["documents"]],
+)
+
+# Query
+results = collection.query(query_texts=["how to deploy"], n_results=5)
+</CodeBlock>
+</Tab>
+<Tab title="JavaScript">
+<CodeBlock language="javascript">
+const data = JSON.parse(fs.readFileSync("dist/search-vectors.json", "utf-8"));
+
+// Each vector is a Float32 array of `dimension` length
+const { documents, vectors, dimension } = data;
+
+// Feed into Pinecone, Weaviate, Qdrant, etc.
+for (let i = 0; i < documents.length; i++) {
+  await vectorDB.upsert({
+    id: documents[i].path,
+    values: vectors[i],
+    metadata: {
+      title: documents[i].title,
+      snippet: documents[i].snippet,
+    },
+  });
+}
+</CodeBlock>
+</Tab>
+</Tabs>
+
+### What's Included Per Document
+
+| Field | Description |
+|:------|:------------|
+| `id` | Numeric index (0-based) |
+| `title` | Page title (from first `<h1>`) |
+| `path` | URL path (e.g., `/docs/installation`) |
+| `snippet` | First 160 characters of content |
+| `text` | Full plain text content (markdown stripped) |
+| `headings` | Heading positions with title, anchor, depth, and character offset |
+
+The `text` and `headings` fields give you everything needed to build section-level retrieval — split text by heading offsets to create chunks mapped to specific sections.
+
+<Callout kind="tip" title="Pair with llms-full.txt">
+For RAG pipelines, combine `search-vectors.json` (pre-computed embeddings) with `llms-full.txt` (full text) and `llms.txt` (page index). All three are generated automatically on every build — your documentation is RAG-ready out of the box.
+</Callout>

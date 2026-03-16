@@ -1,0 +1,147 @@
+---
+title: Writing Content — RDX Syntax and File Organization | Oxidoc
+description: Learn RDX, Oxidoc's content format. Write Markdown with embedded components, configure frontmatter, organize files, and create Mermaid diagrams.
+---
+
+# Writing Content
+
+Oxidoc uses **RDX** — Markdown with embedded components. Files use the `.rdx` extension.
+
+## File Organization
+
+Content lives in directories mapped to site sections via `oxidoc.toml`:
+
+```text
+my-docs/
+├── oxidoc.toml
+├── home.rdx
+└── docs/
+    ├── intro.rdx
+    ├── guide.rdx
+    └── advanced/
+        └── plugins.rdx
+```
+
+Nested folders create nested URL paths. `docs/advanced/plugins.rdx` is served at `/docs/advanced/plugins`.
+
+### Ordering with Numbered Prefixes
+
+Prefix files with numbers to control sidebar order without changing slugs:
+
+```text
+docs/
+├── 01-intro.rdx      → /docs/intro
+├── 02-quickstart.rdx  → /docs/quickstart
+└── 03-advanced.rdx    → /docs/advanced
+```
+
+The numeric prefix is stripped from the URL slug.
+
+## Frontmatter
+
+Every `.rdx` file starts with YAML frontmatter between `---` fences:
+
+```yaml
+---
+title: Page Title
+description: Optional meta description for SEO
+layout: landing
+---
+```
+
+| Field | Required | Description |
+|:------|:---------|:------------|
+| `title` | Yes | Page title, used in sidebar and browser tab |
+| `description` | No | Meta description for SEO and search snippets |
+| `layout` | No | Set to `landing` for full-width landing pages (no sidebar/TOC) |
+
+## Markdown Features
+
+RDX supports standard Markdown:
+
+- **Headings** — `#` through `######`, auto-linked with anchors
+- **Bold** / *Italic* / ~~Strikethrough~~
+- Ordered and unordered lists
+- [Links](https://example.com) and images `![alt](url)`
+- Block quotes with `>`
+- Horizontal rules with `---`
+
+### Code Blocks
+
+Fenced code blocks with syntax highlighting:
+
+````markdown
+```rust
+fn main() {
+    println!("Hello!");
+}
+```
+````
+
+### Tables
+
+Standard Markdown tables with alignment:
+
+```markdown
+| Left | Center | Right |
+|:-----|:------:|------:|
+| a    |   b    |     c |
+```
+
+### Mermaid Diagrams
+
+Use `mermaid` as the language for a fenced code block:
+
+````markdown
+```mermaid
+graph LR
+    A[Write] --> B[Build] --> C[Deploy]
+```
+````
+
+The diagram is rendered automatically — no configuration needed.
+
+## Embedding Components
+
+Use HTML-like tags to embed interactive components in your Markdown:
+
+````markdown
+Here is a callout:
+
+<Callout kind="tip" title="Tip">
+This renders as an interactive callout component.
+</Callout>
+
+And tabs:
+
+<Tabs>
+<Tab title="First">Content one</Tab>
+<Tab title="Second">Content two</Tab>
+</Tabs>
+````
+
+Components can contain Markdown. See [Components](/docs/components) for the full list.
+
+## File-System Routing vs Explicit Navigation
+
+By default, pages appear in the sidebar only if listed in `oxidoc.toml` navigation groups:
+
+<CodeBlock language="toml" filename="oxidoc.toml">
+groups = [
+  { group = "Getting Started", pages = ["intro", "quickstart"] },
+]
+</CodeBlock>
+
+Pages not listed in navigation are still built and accessible by URL — they just don't appear in the sidebar. This is useful for pages linked inline but not important enough for the sidebar.
+
+## Root Pages
+
+Pages outside of any section (like a landing page) are configured under `[routing.root]`:
+
+<CodeBlock language="toml" filename="oxidoc.toml">
+[routing.root]
+homepage = "home.rdx"
+pages = ["about.rdx", "contact.rdx"]
+</CodeBlock>
+
+The `homepage` is rendered at `/`. Additional `pages` are rendered at `/{name}`.

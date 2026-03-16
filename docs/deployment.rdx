@@ -1,14 +1,15 @@
 ---
-title: Deployment
+title: Deployment — Deploy Your Docs Site | Oxidoc
+description: Deploy your Oxidoc site to any static host. Step-by-step guides for GitHub Pages, Vercel, and Netlify with CI/CD configuration.
 ---
 
 # Deployment
 
 Oxidoc generates a fully static site in the `dist/` directory. Run the build command:
 
-<CodeBlock language="bash">
+```bash
 oxidoc build
-</CodeBlock>
+```
 
 This produces a `dist/` folder with all HTML, CSS, JS, and Wasm files ready to serve. Deploy it to any static hosting provider.
 

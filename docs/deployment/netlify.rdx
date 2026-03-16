@@ -1,5 +1,6 @@
 ---
-title: Netlify
+title: Deploy to Netlify — Continuous Deployment with Previews | Oxidoc
+description: Deploy your Oxidoc site to Netlify. Continuous deployment from Git, branch previews, and configuration via netlify.toml.
 ---
 
 # Netlify
@@ -18,7 +19,7 @@ Set the following:
 
 | Setting | Value |
 |:--------|:------|
-| **Build Command** | `cargo install oxidoc-cli && oxidoc build` |
+| **Build Command** | `curl -fsSL https://raw.githubusercontent.com/oxidoc-lab/oxidoc/main/install.sh | sh && oxidoc build` |
 | **Publish Directory** | `dist` |
 
 </Step>
@@ -34,7 +35,7 @@ You can also configure builds with a `netlify.toml` file in your repository root
 
 <CodeBlock language="toml" filename="netlify.toml">
 [build]
-  command = "cargo install oxidoc-cli && oxidoc build"
+  command = "curl -fsSL https://raw.githubusercontent.com/oxidoc-lab/oxidoc/main/install.sh | sh && oxidoc build"
   publish = "dist"
 </CodeBlock>
 </Callout>

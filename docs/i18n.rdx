@@ -1,0 +1,88 @@
+---
+title: Internationalization (i18n) — Multi-Locale Documentation | Oxidoc
+description: Set up multi-language documentation with Oxidoc. Configure locales, write Fluent translation files, and add a locale switcher — supports 25+ languages.
+---
+
+# Internationalization (i18n)
+
+Oxidoc supports multi-locale documentation with a built-in locale switcher.
+
+## Configuration
+
+<CodeBlock language="toml" filename="oxidoc.toml">
+[i18n]
+default_locale = "en"
+locales = ["en", "ja", "es", "fr"]
+translation_dir = "i18n"
+</CodeBlock>
+
+| Field | Type | Default | Description |
+|:------|:-----|:--------|:------------|
+| `default_locale` | String | `"en"` | Default locale, served at root (no URL prefix) |
+| `locales` | String[] | `[]` | All configured locales |
+| `translation_dir` | String | `"i18n"` | Directory for translation files |
+
+i18n is enabled automatically when more than one locale is configured.
+
+## Translation Files
+
+Oxidoc uses [Project Fluent](https://projectfluent.org/) (`.ftl` files) for translations. Create one file per locale in your translation directory:
+
+```text
+i18n/
+├── en.ftl
+├── ja.ftl
+├── es.ftl
+└── fr.ftl
+```
+
+Each `.ftl` file contains key-value translation messages:
+
+<CodeBlock language="ftl" filename="i18n/en.ftl">
+welcome = Welcome to the docs
+getting-started = Getting Started
+search-placeholder = Search documentation...
+</CodeBlock>
+
+<CodeBlock language="ftl" filename="i18n/ja.ftl">
+welcome = ドキュメントへようこそ
+getting-started = はじめに
+search-placeholder = ドキュメントを検索...
+</CodeBlock>
+
+## How It Works
+
+When you build with multiple locales:
+
+1. The default locale is built at the root URL (`/docs/...`)
+2. Other locales are built at `/{locale}/docs/...` (e.g., `/ja/docs/...`)
+3. A locale switcher dropdown appears in the header
+4. Translation bundles are generated as JSON for client-side use
+
+## Supported Locales
+
+Oxidoc provides display names for these locale codes:
+
+| Code | Display Name | Code | Display Name |
+|:-----|:-------------|:-----|:-------------|
+| `en` | English | `ko` | 한국어 |
+| `es` | Español | `pt` | Português |
+| `ja` | 日本語 | `ru` | Русский |
+| `fr` | Français | `it` | Italiano |
+| `de` | Deutsch | `ar` | العربية |
+| `zh` | 中文 | `hi` | हिन्दी |
+
+Additional supported codes: `tr`, `pl`, `vi`, `th`, `nl`, `sv`, `da`, `fi`, `no`, `cs`, `hu`, `ro`, `el`, `he`, `uk`.
+
+## Per-Locale Content
+
+For locale-specific content pages, create parallel directory structures:
+
+```text
+docs/
+├── intro.rdx          # Default locale content
+└── ja/
+    └── intro.rdx      # Japanese content
+```
+
+If a translated page doesn't exist, the default locale content is used.

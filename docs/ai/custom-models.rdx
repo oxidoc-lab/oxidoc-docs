@@ -1,0 +1,130 @@
+---
+title: Custom Embedding Models — Use Your Own GGUF Model | Oxidoc
+description: Replace Oxidoc's default search model with your own GGUF sentence embeddings. Optimize for your language, domain, or performance requirements.
+---
+
+# Custom Embedding Models
+
+Oxidoc's bundled BGE Micro v2 model works well for English documentation, but you may want a different model for non-English content, specialized domains, or different quality/size tradeoffs.
+
+## Using a Custom Model
+
+Point `model_path` to your GGUF file:
+
+<CodeBlock language="toml" filename="oxidoc.toml">
+[search]
+semantic = true
+model_path = "./models/my-custom-model.gguf"
+</CodeBlock>
+
+Oxidoc loads your model instead of the bundled one. At build time, it embeds all pages using your model. The model file is copied to the output directory for browser-side query embedding.
+
+## Model Requirements
+
+Your model must meet three requirements:
+
+<Steps>
+<Step title="GGUF format">
+A single `.gguf` file with the tokenizer embedded. This is the standard format for efficient model distribution — one file contains everything needed for inference.
+</Step>
+<Step title="Sentence embedding model">
+The model must produce fixed-size vectors from text input. It must be a sentence-transformer or embedding model, **not** a generative LLM. Models like BERT, BGE, E5, GTE, and MiniLM work.
+</Step>
+<Step title="Compatible architecture">
+Standard BERT-family sentence transformers work out of the box with Oxidoc's `boostr` GGUF loader. This covers the vast majority of embedding models on Hugging Face.
+</Step>
+</Steps>
+
+## When to Use a Custom Model
+
+<CardGrid columns="2">
+<Card title="Non-English documentation" icon="🌍">
+The bundled model is optimized for English. For Japanese, Chinese, Korean, Arabic, or multilingual docs, use a model trained on your target language. Semantic search quality drops significantly when the model doesn't understand the content language.
+</Card>
+<Card title="Domain-specific content" icon="🔬">
+Medical, legal, scientific, or financial documentation uses specialized terminology. A domain-fine-tuned model understands that "injection" means something different in medicine vs. software security.
+</Card>
+<Card title="Higher quality embeddings" icon="📈">
+Larger models (100MB+) with more dimensions (768, 1024) capture more semantic nuance. If search quality is critical and your users have fast connections, a larger model is worth the tradeoff.
+</Card>
+<Card title="Smaller footprint" icon="📦">
+If 17.5 MB is too large for your users (mobile-first docs, users on slow connections), use a smaller quantized model. Q4 quantization can cut size by 50-75% with modest quality loss.
+</Card>
+</CardGrid>
+
+## Finding Models
+
+Search [Hugging Face](https://huggingface.co/models?sort=downloads&search=gguf+embedding) for GGUF sentence embedding models. When evaluating models, look for:
+
+- **"sentence-transformers"** or **"embedding"** in the model name
+- **GGUF variants** — look for filenames like `model-q5_k_m.gguf` or `model-f16.gguf`
+- **Language coverage** — check the model card for supported languages
+- **Embedding dimensions** — higher dimensions = better quality but larger vectors
+- **MTEB benchmark scores** — the standard benchmark for embedding quality
+
+### Recommended Models by Use Case
+
+| Use Case | Model | Size | Dimensions | Notes |
+|:---------|:------|:-----|:-----------|:------|
+| English (default) | BGE Micro v2 | 17.5 MB | 384 | Bundled, good quality/size ratio |
+| English (high quality) | `bge-small-en-v1.5` | ~130 MB | 384 | Better quality, larger download |
+| Multilingual | `multilingual-e5-small` | ~120 MB | 384 | 100+ languages, good for i18n sites |
+| Japanese / CJK | `multilingual-e5-small` | ~120 MB | 384 | Strong CJK support |
+| Chinese | `bge-small-zh-v1.5` | ~100 MB | 512 | Optimized specifically for Chinese |
+| Minimal size | `all-MiniLM-L6-v2` | ~23 MB | 384 | Smallest useful model |
+
+<Callout kind="warning" title="Model size = browser download">
+Your custom model file is served to the browser for query-time embedding. A 500 MB model means a 500 MB download before semantic search works. Lexical search still works immediately — semantic search becomes available once the model loads.
+</Callout>
+
+## Converting Models to GGUF
+
+If you find a model on Hugging Face in safetensors or PyTorch format but not GGUF, you can convert it:
+
+<Steps>
+<Step title="Clone the model">
+```bash
+git clone https://huggingface.co/BAAI/bge-small-en-v1.5
+```
+</Step>
+<Step title="Convert to GGUF">
+Use the conversion tools from `llama.cpp` or `ggml`:
+```bash
+python convert-hf-to-gguf.py bge-small-en-v1.5 --outtype f16
+```
+</Step>
+<Step title="Quantize (optional)">
+Reduce file size with quantization:
+```bash
+./quantize bge-small-en-v1.5-f16.gguf bge-small-en-v1.5-q5_k_m.gguf Q5_K_M
+```
+
+Quantization levels (smaller = less quality):
+- **F16** — full precision, largest file
+- **Q8_0** — near-lossless, ~50% smaller
+- **Q5_K_M** — good balance, ~65% smaller
+- **Q4_K_M** — aggressive, ~75% smaller
+</Step>
+<Step title="Use in Oxidoc">
+<CodeBlock language="toml" filename="oxidoc.toml">
+[search]
+semantic = true
+model_path = "./models/bge-small-en-v1.5-q5_k_m.gguf"
+</CodeBlock>
+</Step>
+</Steps>
+
+<Callout kind="info" title="Embedding models only">
+Only convert sentence/embedding models (BERT, BGE, E5, GTE, MiniLM). Do **not** use generative LLMs (GPT, Llama, Mistral) — they don't produce fixed-size embeddings and won't work with Oxidoc's search engine.
+</Callout>
+
+## Testing Your Model
+
+After switching models, test search quality by trying:
+
+1. **Exact term searches** — "oxidoc.toml", "CodeBlock" (should still work via lexical)
+2. **Conceptual searches** — "how to change colors" (should find theming page)
+3. **Synonym searches** — "setup" (should find installation page)
+4. **Your domain terms** — whatever specialized vocabulary your docs use
+
+If semantic results are poor, try a larger model or one specifically trained on your domain/language.

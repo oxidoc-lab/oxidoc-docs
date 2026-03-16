@@ -1,0 +1,79 @@
+---
+title: Search — Built-in Hybrid Search Engine | Oxidoc
+description: Oxidoc ships a production-grade search engine running in-browser via Wasm. BM25 lexical search works with zero config. Add semantic search with one line.
+---
+
+# Search
+
+Oxidoc ships a production-grade search engine that runs entirely in the browser via WebAssembly. No server, no external service, no API keys — just build your site and search works.
+
+<CardGrid>
+<Card title="Lexical Search" icon="🔤" href="/docs/search/lexical">
+BM25 keyword search with fuzzy matching, phrase boost, and section-level results. Zero configuration.
+</Card>
+<Card title="Semantic Search" icon="🧠" href="/docs/search/semantic">
+Understand the meaning of queries with sentence embeddings. Enable with one config line.
+</Card>
+<Card title="Custom Models" icon="🔧" href="/docs/ai/custom-models">
+Use your own GGUF embedding model for non-English docs or specialized domains.
+</Card>
+<Card title="External Providers" icon="🌐" href="/docs/search/providers">
+Integrate Algolia, Typesense, Meilisearch, or bring your own search service.
+</Card>
+</CardGrid>
+
+## Overview
+
+| Feature | Status | Details |
+|:--------|:-------|:--------|
+| Lexical (BM25) | Enabled by default | Zero config, always works |
+| Semantic embeddings | Opt-in | `semantic = true` in config |
+| Hybrid ranking (RRF) | Automatic | When semantic is enabled, fuses both result sets |
+| Fuzzy matching | Built-in | Tolerates typos based on term length |
+| Section-level results | Built-in | Links to the exact heading, not just the page |
+| Lazy chunk loading | Built-in | Only fetches index data matching query terms |
+| Custom models | Supported | Provide your own GGUF sentence embedding model |
+| External providers | Supported | Algolia, Typesense, Meilisearch, or custom JS |
+
+## How It Works
+
+```mermaid
+graph TD
+    B[oxidoc build] --> L[BM25 Index]
+    B --> S[Embedding Vectors]
+    B --> M[Model Copy]
+    L --> C[Chunked by term prefix]
+    C --> W[Browser / Wasm]
+    S --> W
+    M --> W
+    W --> Q[User Query]
+    Q --> LR[Lexical Results]
+    Q --> SR[Semantic Results]
+    LR --> RRF[Reciprocal Rank Fusion]
+    SR --> RRF
+    RRF --> R[Ranked Results]
+```
+
+At build time, Oxidoc generates a search index from all your pages. The index is split into small chunks so the browser only downloads what's needed for each query. When semantic search is enabled, pre-computed embedding vectors and the model file are also included in the output.
+
+## Quick Start
+
+Search works out of the box. To enable semantic search:
+
+<CodeBlock language="toml" filename="oxidoc.toml">
+[search]
+semantic = true
+</CodeBlock>
+
+That's it. See the subpages for deep dives into each feature.
+
+## Output Files
+
+When using the built-in provider, `oxidoc build` generates these search files in `dist/`:
+
+| File | Purpose | Loaded |
+|:-----|:--------|:-------|
+| `search-meta.bin` | Document metadata + chunk manifest | Always (on page load) |
+| `search-chunk-{id}.bin` | Lexical postings for term prefixes | On demand (per query) |
+| `search-vectors.json` | Pre-computed page embeddings | Only if semantic enabled |
+| `search-model.gguf` | Embedding model for query-time inference | Only if semantic enabled |

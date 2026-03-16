@@ -1,0 +1,72 @@
+---
+title: Lexical Search — BM25 Full-Text Search Engine | Oxidoc
+description: Oxidoc's built-in BM25 search engine with fuzzy matching, phrase boost, section-level results, and lazy chunk loading. Works with zero configuration.
+---
+
+# Lexical Search
+
+Lexical search is Oxidoc's default search engine. It uses BM25 — the same ranking algorithm behind Elasticsearch and Apache Lucene — to match pages by keyword relevance. It works out of the box with zero configuration.
+
+## Features
+
+| Feature | Description |
+|:--------|:------------|
+| **BM25 scoring** | Industry-standard ranking with K1=1.2, B=0.75 tuning |
+| **Fuzzy matching** | Levenshtein edit distance — tolerates typos automatically |
+| **Prefix matching** | Results appear as you type, before finishing the word |
+| **Phrase boost** | 5x score boost when query terms appear consecutively in content |
+| **Heading boost** | 2x score boost for matches in page headings |
+| **Section scoring** | Results link to the exact heading section, not just the page |
+| **CamelCase splitting** | "CodeBlock" matches searches for "code" or "block" |
+| **Breadcrumb trails** | Results show "Page > H2 > H3" navigation path |
+| **Context snippets** | 160-character excerpt around the match, aligned to word boundaries |
+| **Lazy chunk loading** | Only downloads index chunks matching the query's term prefixes |
+
+## How BM25 Works
+
+BM25 (Best Matching 25) scores each page based on how often the query terms appear, normalized by document length:
+
+- **Term frequency** — pages where the term appears more often score higher, with diminishing returns (saturation at K1=1.2)
+- **Inverse document frequency** — rare terms are worth more than common ones
+- **Length normalization** — short, focused pages aren't penalized against long ones (B=0.75)
+
+This means a concise page that mentions "versioning" 3 times ranks higher than a sprawling page that mentions it once in passing.
+
+## Fuzzy Matching
+
+Oxidoc tolerates typos automatically based on term length:
+
+| Term Length | Max Edits | Example |
+|:------------|:----------|:--------|
+| 1–3 chars | 0 | "css" → exact match only |
+| 4–6 chars | 1 | "buld" → matches "build" |
+| 7+ chars | 2 | "conifgure" → matches "configure" |
+
+Fuzzy matching kicks in when an exact match isn't found. You don't need to configure it.
+
+## Section-Level Results
+
+Results don't just link to a page — they link to the specific heading section where the match was found. Each result includes:
+
+- **Anchor link** — clicking goes directly to the matching section
+- **Breadcrumb trail** — shows the heading hierarchy (e.g., "Configuration > Theme > Dark Mode")
+- **Context snippet** — 160-character excerpt from the matching section
+
+## Lazy Chunk Loading
+
+The search index is split into chunks by 2-character term prefix (e.g., "co", "se", "bu"). When a user types a query:
+
+1. Oxidoc determines which chunks are needed based on the query terms
+2. Only those chunks are fetched from the server
+3. Previously loaded chunks are cached in memory
+
+This means the browser never downloads the full index — only the small slices relevant to the current query. For large documentation sites, this keeps search fast regardless of total page count.
+
+## Index Size
+
+The lexical index is compact. For a documentation site with ~50 pages:
+
+- `search-meta.bin` — ~20-50 KB (loaded once on page open)
+- Each `search-chunk-{id}.bin` — ~1-10 KB (loaded on demand)
+
+Total transfer per query is typically under 20 KB.

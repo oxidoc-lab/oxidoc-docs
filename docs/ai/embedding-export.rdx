@@ -1,0 +1,175 @@
+---
+title: "Embedding Export — Export Embeddings for RAG Pipelines | Oxidoc"
+description: "Generate and export documentation embeddings in JSON, JSONL, NumPy, Safetensors, or Parquet format. Build custom RAG chatbots and AI search from your docs."
+---
+
+# Embedding Export
+
+<Badge variant="new">Planned</Badge>
+
+<Callout kind="info" title="Coming soon">
+This feature is planned but not yet implemented. Track progress at [oxidoc-lab/oxidoc#1](https://github.com/oxidoc-lab/oxidoc/issues/1).
+</Callout>
+
+A standalone command that generates embeddings from your documentation and exports them in standard formats — for RAG pipelines, vector databases, and custom AI tools.
+
+Today, embeddings are only generated as part of `oxidoc build` in a JSON format designed for the browser. `oxidoc embed` will make Oxidoc a first-class tool for making documentation AI-ready, with proper export formats and chunking strategies.
+
+## Proposed Usage
+
+```bash
+# Default: JSON output, one embedding per page
+oxidoc embed
+
+# Choose export format
+oxidoc embed --format jsonl
+oxidoc embed --format safetensors
+oxidoc embed --format npy
+oxidoc embed --format parquet
+
+# Custom output directory
+oxidoc embed -o embeddings/
+
+# Use a custom embedding model
+oxidoc embed --model ./models/multilingual-e5-small.gguf
+
+# Control chunking granularity
+oxidoc embed --chunk section      # One embedding per heading section
+oxidoc embed --chunk paragraph    # One embedding per paragraph
+
+# Combine options
+oxidoc embed --format jsonl --chunk section --model ./models/custom.gguf -o rag/
+```
+
+## Export Formats
+
+| Format | Extension | Best For |
+|:-------|:----------|:---------|
+| JSON | `.json` | Quick inspection, small sites, JavaScript pipelines |
+| JSONL | `.jsonl` | Streaming ingestion, large sites, line-by-line processing |
+| NumPy | `.npy` + `.json` | Python ML workflows (`np.load()`) |
+| Safetensors | `.safetensors` | HuggingFace ecosystem, safe tensor sharing |
+| Parquet | `.parquet` | Analytics (pandas, polars, DuckDB), columnar queries |
+
+### JSON (default)
+
+Same schema as the current `search-vectors.json`, with added model metadata:
+
+```json
+{
+  "dimension": 384,
+  "model": "bge-micro-v2",
+  "chunk_strategy": "page",
+  "documents": [
+    {
+      "id": 0,
+      "title": "Installation",
+      "path": "/docs/installation",
+      "text": "Install Oxidoc with a single command...",
+      "anchor": null,
+      "headings": [...]
+    }
+  ],
+  "vectors": [[0.023, -0.041, 0.089, "..."]]
+}
+```
+
+### JSONL
+
+One JSON object per document — streaming-friendly for large doc sites:
+
+```jsonl
+{"id":0,"title":"Installation","path":"/docs/installation","text":"...","vector":[0.023,-0.041,...]}
+{"id":1,"title":"Quickstart","path":"/docs/quickstart","text":"...","vector":[0.015,0.089,...]}
+```
+
+### Safetensors
+
+A single `.safetensors` file loadable with the HuggingFace `safetensors` Python package:
+
+```python
+from safetensors import safe_open
+
+with safe_open("embeddings.safetensors", framework="numpy") as f:
+    vectors = f.get_tensor("vectors")      # (N, 384) float32
+    # Metadata in tensor attributes
+```
+
+### NumPy
+
+Two files: `embeddings.npy` (float32 matrix) + `metadata.json` (document info):
+
+```python
+import numpy as np
+import json
+
+vectors = np.load("embeddings.npy")        # (N, 384) float32
+with open("metadata.json") as f:
+    docs = json.load(f)["documents"]
+```
+
+### Parquet
+
+Columnar format with all data in one file:
+
+```python
+import polars as pl
+
+df = pl.read_parquet("embeddings.parquet")
+# Columns: id, title, path, text, anchor, vector (list[f32])
+```
+
+## Chunking Strategies
+
+Control how documents are split before embedding:
+
+### Page (default)
+
+One embedding per page. Simple and effective for small-to-medium documentation sites.
+
+### Section
+
+Split at heading boundaries (H2, H3). Each section gets its own embedding with an `anchor` field linking directly to that section. Better retrieval granularity for long pages.
+
+```text
+Page "Configuration" splits into:
+  → "Configuration > Project"      (anchor: #project)
+  → "Configuration > Theme"        (anchor: #theme)
+  → "Configuration > Routing"      (anchor: #routing)
+  → "Configuration > Search"       (anchor: #search)
+```
+
+### Paragraph
+
+Most granular — each paragraph gets its own embedding. Produces many more vectors but enables precise retrieval. Includes character offset for reconstructing context.
+
+## Use Cases
+
+<CardGrid columns="2">
+<Card title="RAG Chatbot" icon="🤖">
+Embed your docs, store in ChromaDB or Pinecone, and build an "ask the docs" chatbot that answers questions with citations.
+</Card>
+<Card title="CI Pipeline" icon="🔄">
+Run `oxidoc embed` on every docs commit in CI. Push fresh embeddings to your vector database automatically.
+</Card>
+<Card title="Multi-Project Search" icon="🔗">
+Combine embeddings from multiple Oxidoc sites into one search index for unified cross-project search.
+</Card>
+<Card title="Enterprise Search" icon="🏢">
+Feed embeddings into your existing enterprise search infrastructure (Elasticsearch, OpenSearch, Vespa).
+</Card>
+</CardGrid>
+
+## Current Workaround
+
+Until `oxidoc embed` ships, you can extract embeddings from the build output:
+
+```bash
+# Build with semantic search enabled
+oxidoc build
+
+# Embeddings are in dist/search-vectors.json
+cp dist/search-vectors.json ./embeddings.json
+```
+
+See [Semantic Search > Embedding Output Format](/docs/search/semantic#embedding-output-format) for the schema and code examples for ingesting this file into vector databases.

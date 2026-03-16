@@ -1,0 +1,86 @@
+---
+title: Install Oxidoc — Linux, macOS, and Windows | Oxidoc
+description: Install Oxidoc with a single command on Linux, macOS, or Windows. Learn how to update, pin versions, and configure your install directory.
+---
+
+# Installation
+
+## Install Script
+
+The recommended way to install Oxidoc is the install script, which detects your platform and downloads the correct binary.
+
+<Tabs>
+<Tab title="Linux / macOS">
+```bash
+curl -fsSL https://raw.githubusercontent.com/oxidoc-lab/oxidoc/main/install.sh | sh
+```
+</Tab>
+<Tab title="Windows (PowerShell)">
+```powershell
+irm https://raw.githubusercontent.com/oxidoc-lab/oxidoc/main/install.ps1 | iex
+```
+</Tab>
+</Tabs>
+
+The script installs the binary to `~/.oxidoc/bin/` by default and adds it to your `PATH`.
+
+### Custom Install Directory
+
+Set `OXIDOC_INSTALL_DIR` to change the install location:
+
+```bash
+OXIDOC_INSTALL_DIR=/usr/local/bin \
+  curl -fsSL https://raw.githubusercontent.com/oxidoc-lab/oxidoc/main/install.sh | sh
+```
+
+## GitHub Releases
+
+Download a pre-built binary directly from [GitHub Releases](https://github.com/oxidoc-lab/oxidoc/releases).
+
+| Platform | Architecture | Binary |
+|:---------|:-------------|:-------|
+| Linux | x86_64 | `oxidoc-x86_64-unknown-linux-gnu` |
+| Linux | aarch64 | `oxidoc-aarch64-unknown-linux-gnu` |
+| macOS | x86_64 | `oxidoc-x86_64-apple-darwin` |
+| macOS | Apple Silicon | `oxidoc-aarch64-apple-darwin` |
+| Windows | x86_64 | `oxidoc-x86_64-pc-windows-msvc.exe` |
+
+## Verify Installation
+
+```bash
+oxidoc --version
+```
+
+## Update
+
+Update to the latest stable release:
+
+```bash
+oxidoc update
+```
+
+Install the latest prerelease:
+
+```bash
+oxidoc update --pre
+```
+
+## Switch Versions
+
+Pin a specific version:
+
+```bash
+oxidoc set-version v0.1.0
+```
+
+This downloads and installs that exact version, useful for locking CI to a known-good release.
+
+## Uninstall
+
+Remove the binary and its directory:
+
+```bash
+rm -rf ~/.oxidoc
+```
+
+Remove the `PATH` entry from your shell config (`~/.bashrc`, `~/.zshrc`, etc.) if it was added.

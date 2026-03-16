@@ -1,0 +1,269 @@
+---
+title: Configuration Reference — oxidoc.toml | Oxidoc
+description: Complete reference for oxidoc.toml. Configure your project, theme, navigation, search, versioning, i18n, analytics, and more with every field documented.
+---
+
+# Configuration
+
+All configuration lives in `oxidoc.toml` at the project root.
+
+## `[project]`
+
+Core project metadata.
+
+<CodeBlock language="toml" filename="oxidoc.toml">
+[project]
+name = "My Docs"
+description = "Documentation for my project"
+logo = "/assets/logo.svg"
+base_url = "https://example.com"
+edit_url = "https://github.com/org/repo/blob/main/docs"
+edit_label = "Edit this page"
+debug_islands = false
+</CodeBlock>
+
+| Field | Type | Default | Description |
+|:------|:-----|:--------|:------------|
+| `name` | String | **required** | Project name shown in header and metadata |
+| `description` | String | — | Site description for SEO and feeds |
+| `logo` | String | — | Path to logo image (relative to assets) |
+| `base_url` | String | — | Full base URL for sitemap, feeds, and canonical links |
+| `edit_url` | String | — | Base URL for "edit this page" links (e.g. GitHub blob URL) |
+| `edit_label` | String | `"View page source"` | Label for the edit/source link on each page |
+| `debug_islands` | bool | `false` | Show debug outlines on Wasm island components |
+
+## `[theme]`
+
+Visual customization.
+
+<CodeBlock language="toml" filename="oxidoc.toml">
+[theme]
+primary = "#3b82f6"
+accent = "#f59e0b"
+font = "Inter, sans-serif"
+code_font = "JetBrains Mono, monospace"
+dark_mode = "system"
+custom_css = ["assets/custom.css"]
+</CodeBlock>
+
+| Field | Type | Default | Description |
+|:------|:-----|:--------|:------------|
+| `primary` | String | `"#2563eb"` | Primary color (links, buttons, active states) |
+| `accent` | String | `"#f59e0b"` | Accent color for decorative elements |
+| `font` | String | System font stack | Body text font family |
+| `code_font` | String | Monospace stack | Code font family |
+| `dark_mode` | String | `"system"` | Dark mode: `"system"`, `"light"`, or `"dark"` |
+| `custom_css` | String[] | `[]` | Custom CSS files to load (paths relative to project root) |
+
+See [Theming](/docs/theming) for the full CSS variable reference.
+
+## `[routing]`
+
+Controls site structure, navigation, and sections.
+
+### `[routing.root]`
+
+<CodeBlock language="toml" filename="oxidoc.toml">
+[routing.root]
+homepage = "home.rdx"
+pages = ["about.rdx", "contact.rdx"]
+</CodeBlock>
+
+| Field | Type | Default | Description |
+|:------|:-----|:--------|:------------|
+| `homepage` | String | — | RDX file rendered at `/` |
+| `pages` | String[] | `[]` | Additional root-level pages rendered at `/{name}` |
+
+### `header_links`
+
+<CodeBlock language="toml" filename="oxidoc.toml">
+[routing]
+header_links = [
+  { label = "Docs", href = "/docs" },
+  { label = "GitHub", href = "https://github.com/org/repo" },
+]
+</CodeBlock>
+
+| Field | Type | Description |
+|:------|:-----|:------------|
+| `label` | String | Link text displayed in the header |
+| `href` | String | URL (internal path or external URL) |
+
+### `navigation`
+
+Array of site sections. Each section has its own sidebar and content directory.
+
+<CodeBlock language="toml" filename="oxidoc.toml">
+[routing]
+navigation = [
+  { path = "/docs", dir = "docs", groups = [
+    { group = "Getting Started", pages = ["intro", "quickstart"] },
+    { group = "Guides", pages = ["guides/styling"] },
+  ] },
+  { path = "/api", openapi = "./openapi.yaml" },
+]
+</CodeBlock>
+
+| Field | Type | Description |
+|:------|:-----|:------------|
+| `path` | String | Base URL path (e.g., `"/docs"`, `"/api"`) |
+| `dir` | String | Content directory for `.rdx` files (relative to project root) |
+| `groups` | Array | Sidebar groups, each with `group` (title) and `pages` (slug list) |
+| `openapi` | String | Path to OpenAPI spec — auto-generates API reference pages |
+
+Sections are fully independent — each has its own sidebar. You can mix `.rdx` content sections with OpenAPI sections:
+
+<CodeBlock language="toml" filename="oxidoc.toml">
+[routing]
+navigation = [
+  { path = "/docs", dir = "docs", groups = [
+    { group = "Guides", pages = ["intro", "quickstart"] },
+    { group = "Advanced", pages = ["plugins", "theming"] },
+  ] },
+  { path = "/api", openapi = "./openapi.yaml" },
+  { path = "/internal", dir = "internal-docs", groups = [
+    { group = "Team", pages = ["onboarding", "runbooks"] },
+  ] },
+]
+</CodeBlock>
+
+<Callout kind="info" title="Content directories">
+Each section's `dir` is resolved relative to the project root. You can have as many content directories as you need — they don't have to be called `docs`.
+</Callout>
+
+Pages can use subdirectories — `"guides/styling"` maps to `docs/guides/styling.rdx`.
+
+## `[search]`
+
+<CodeBlock language="toml" filename="oxidoc.toml">
+[search]
+provider = "oxidoc"
+semantic = true
+model_path = "./models/embedding.gguf"
+</CodeBlock>
+
+| Field | Type | Default | Description |
+|:------|:-----|:--------|:------------|
+| `provider` | String | `"oxidoc"` | Search provider: `"oxidoc"`, `"algolia"`, `"typesense"`, `"meilisearch"`, `"custom"` |
+| `semantic` | bool | `false` | Enable semantic (hybrid) search alongside BM25 |
+| `model_path` | String | — | Path to custom GGUF embedding model |
+
+Provider-specific fields — see [Search](/docs/search) for details:
+
+| Provider | Fields |
+|:---------|:-------|
+| Algolia | `app_id`, `api_key`, `index_name` |
+| Typesense | `host`, `port`, `protocol`, `api_key`, `collection_name` |
+| Meilisearch | `host`, `api_key`, `index_name` |
+| Custom | `stylesheet`, `script`, `init_script` |
+
+## `[versioning]`
+
+<CodeBlock language="toml" filename="oxidoc.toml">
+[versioning]
+default = "v2.0"
+versions = ["v1.0", "v2.0"]
+</CodeBlock>
+
+| Field | Type | Default | Description |
+|:------|:-----|:--------|:------------|
+| `default` | String | — | Default version served at the root URL |
+| `versions` | String[] | `[]` | All available versions |
+
+See [Versioning](/docs/versioning) for the full guide.
+
+## `[i18n]`
+
+<CodeBlock language="toml" filename="oxidoc.toml">
+[i18n]
+default_locale = "en"
+locales = ["en", "ja", "es"]
+translation_dir = "i18n"
+</CodeBlock>
+
+| Field | Type | Default | Description |
+|:------|:-----|:--------|:------------|
+| `default_locale` | String | `"en"` | Default locale (served at root, no prefix) |
+| `locales` | String[] | `[]` | All configured locales |
+| `translation_dir` | String | `"i18n"` | Directory for Fluent `.ftl` translation files |
+
+See [i18n](/docs/i18n) for the full guide.
+
+## `[footer]`
+
+<CodeBlock language="toml" filename="oxidoc.toml">
+[footer]
+copyright_owner = "My Company"
+copyright_owner_url = "https://example.com"
+links = [
+  { label = "Privacy", href = "/privacy" },
+  { label = "Terms", href = "/terms" },
+]
+</CodeBlock>
+
+| Field | Type | Default | Description |
+|:------|:-----|:--------|:------------|
+| `copyright_owner` | String | — | Name shown in copyright notice |
+| `copyright_owner_url` | String | — | URL for the copyright owner name |
+| `links` | Array | `[]` | Footer links, each with `label` and `href` |
+
+## `[social]`
+
+<CodeBlock language="toml" filename="oxidoc.toml">
+[social]
+github = "https://github.com/org/repo"
+discord = "https://discord.gg/invite"
+</CodeBlock>
+
+Social links displayed in the header/footer.
+
+## `[analytics]`
+
+<CodeBlock language="toml" filename="oxidoc.toml">
+[analytics]
+google_analytics = "G-XXXXXXXXXX"
+# Or inject a custom script:
+# script = '<script defer data-domain="example.com" src="https://plausible.io/js/script.js"></script>'
+</CodeBlock>
+
+| Field | Type | Default | Description |
+|:------|:-----|:--------|:------------|
+| `google_analytics` | String | — | Google Analytics measurement ID |
+| `script` | String | — | Custom analytics script tag (injected in `<head>`) |
+
+See [Analytics](/docs/analytics) for details.
+
+## `[redirects]`
+
+<CodeBlock language="toml" filename="oxidoc.toml">
+[redirects]
+redirects = [
+  { from = "/old-page", to = "/new-page" },
+  { from = "/guide", to = "/docs/quickstart" },
+]
+</CodeBlock>
+
+Each entry generates an HTML file at `from` that redirects to `to`.
+
+## `[components.custom]`
+
+Register Vanilla JS Web Components:
+
+<CodeBlock language="toml" filename="oxidoc.toml">
+[components.custom]
+PromoBanner = "assets/js/promo-banner.js"
+FeedbackWidget = "assets/js/feedback-widget.js"
+</CodeBlock>
+
+Maps component tag names to JavaScript file paths. See [Custom Components](/docs/guides/custom-components).
+
+## `[attribution]`
+
+<CodeBlock language="toml" filename="oxidoc.toml">
+[attribution]
+oxidoc = true
+</CodeBlock>
+
+| Field | Type | Default | Description |
+|:------|:-----|:--------|:------------|
+| `oxidoc` | bool | `true` | Show "Built with Oxidoc" in the footer |

@@ -1,0 +1,82 @@
+---
+title: Versioning — Archive and Serve Multiple Doc Versions | Oxidoc
+description: Manage versioned documentation with Oxidoc. Create archives, configure version switchers, and serve multiple doc versions from a single build.
+---
+
+# Versioning
+
+Oxidoc supports versioned documentation, allowing users to browse docs for specific releases.
+
+## Creating Archives
+
+Snapshot your current docs as a version:
+
+```bash
+oxidoc archive create v1.0
+```
+
+This captures all pages, navigation structure, search index, and API reference into a binary archive stored in the `.oxidoc-archives/` directory.
+
+## Managing Archives
+
+List all archived versions:
+
+```bash
+oxidoc archive list
+```
+
+Delete a specific version:
+
+```bash
+oxidoc archive delete v1.0
+```
+
+## Configuration
+
+Enable versioning in `oxidoc.toml`:
+
+<CodeBlock language="toml" filename="oxidoc.toml">
+[versioning]
+default = "v2.0"
+versions = ["v1.0", "v2.0"]
+</CodeBlock>
+
+| Field | Type | Description |
+|:------|:-----|:------------|
+| `default` | String | Version served at the root URL (latest) |
+| `versions` | String[] | All versions to include in the build |
+
+Versions not listed here won't be built, even if an archive exists.
+
+## How It Works
+
+When you run `oxidoc build` with versioning enabled:
+
+1. The `default` version is built at the root URL (`/docs/...`)
+2. Other versions are built at `/{version}/docs/...`
+3. A version switcher dropdown appears in the header
+4. Each non-default version shows an "outdated version" banner linking to the latest
+
+Archives store a complete snapshot: navigation, parsed ASTs, search index, and API endpoints. This means old versions render correctly even if you've restructured your docs since.
+
+## Workflow
+
+A typical versioning workflow:
+
+<Steps>
+<Step title="Write docs for v1.0">
+Develop your docs as normal.
+</Step>
+<Step title="Archive before releasing v2.0">
+Run `oxidoc archive create v1.0` to snapshot the current state.
+</Step>
+<Step title="Update docs for v2.0">
+Make changes for the new version. The v1.0 archive is preserved.
+</Step>
+<Step title="Configure versioning">
+Add both versions to `oxidoc.toml` with v2.0 as default.
+</Step>
+<Step title="Build">
+`oxidoc build` generates both versions with a version switcher.
+</Step>
+</Steps>

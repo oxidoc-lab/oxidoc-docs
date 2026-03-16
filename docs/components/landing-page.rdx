@@ -1,0 +1,155 @@
+---
+title: Landing Page Components — Hero, Features, CTA | Oxidoc
+description: Build stunning landing pages with Oxidoc's Hero, FeatureGrid, Section, CTA, and Testimonial components. Full-width layout with zero custom code.
+---
+
+# Landing Page Components
+
+These components are designed for full-width landing pages. Set `layout: landing` in your frontmatter to use them.
+
+```yaml
+---
+title: My Project
+layout: landing
+---
+```
+
+The `landing` layout removes the sidebar and table of contents, giving components the full page width.
+
+## Hero
+
+The main banner at the top of a landing page.
+
+| Prop | Type | Description |
+|:-----|:-----|:------------|
+| `title` | String | Large heading text |
+
+Use `HeroAction` children for call-to-action buttons and include body text as the tagline.
+
+```markdown
+<Hero title="My Project">
+<HeroAction label="Get Started" href="/docs/quickstart" variant="primary" />
+<HeroAction label="GitHub" href="https://github.com/org/repo" variant="secondary" />
+
+A short tagline describing your project.
+</Hero>
+```
+
+### HeroAction
+
+Buttons inside a Hero.
+
+| Prop | Type | Description |
+|:-----|:-----|:------------|
+| `label` | String | Button text |
+| `href` | String | Link URL |
+| `variant` | String | `"primary"` (filled) or `"secondary"` (outlined) |
+
+## Section
+
+A full-width content section with optional background.
+
+| Prop | Type | Description |
+|:-----|:-----|:------------|
+| `bg` | String | Background style: `"muted"` for subtle contrast, omit for default |
+
+```markdown
+<Section bg="muted">
+Content goes here.
+</Section>
+```
+
+## FeatureGrid
+
+A responsive grid of feature cards. Wrap `Feature` components inside it.
+
+```markdown
+<FeatureGrid>
+<Feature icon="⚡" title="Fast">
+Description of feature.
+</Feature>
+<Feature icon="🔍" title="Searchable">
+Another feature.
+</Feature>
+</FeatureGrid>
+```
+
+### Feature
+
+A single feature card inside a `FeatureGrid`.
+
+| Prop | Type | Description |
+|:-----|:-----|:------------|
+| `icon` | String | Emoji or icon |
+| `title` | String | Feature title |
+| `class` | String | Optional CSS class for animations |
+
+## CTA
+
+Call-to-action section. Use `HeroAction` children for buttons.
+
+| Prop | Type | Description |
+|:-----|:-----|:------------|
+| `title` | String | CTA heading |
+| `description` | String | Supporting text |
+
+```markdown
+<CTA title="Ready to start?" description="Get up and running in minutes.">
+<HeroAction label="Install" href="/docs/installation" variant="primary" />
+</CTA>
+```
+
+## TestimonialGrid
+
+A grid of testimonial cards.
+
+```markdown
+<TestimonialGrid>
+<Testimonial name="Jane Doe" role="Developer" avatar="/assets/jane.jpg">
+This tool is amazing.
+</Testimonial>
+<Testimonial name="John Smith" role="CTO">
+Saved us hours of work.
+</Testimonial>
+</TestimonialGrid>
+```
+
+### Testimonial
+
+A single testimonial card.
+
+| Prop | Type | Description |
+|:-----|:-----|:------------|
+| `name` | String | Person's name |
+| `role` | String | Title or role |
+| `avatar` | String | Avatar image URL |
+
+## Full Example
+
+<CodeBlock language="markdown" filename="home.rdx">
+---
+title: My Project
+layout: landing
+---
+
+<Hero title="My Project">
+<HeroAction label="Get Started" href="/docs/quickstart" variant="primary" />
+<HeroAction label="GitHub" href="https://github.com/org/repo" variant="secondary" />
+
+Build something great with zero configuration.
+</Hero>
+
+<Section bg="muted">
+<FeatureGrid>
+<Feature icon="⚡" title="Fast">Lightning-fast builds.</Feature>
+<Feature icon="🔍" title="Search">Built-in full-text search.</Feature>
+<Feature icon="📦" title="Simple">Zero config to get started.</Feature>
+</FeatureGrid>
+</Section>
+
+<Section>
+<CTA title="Ready?" description="Get started in under a minute.">
+<HeroAction label="Install" href="/docs/installation" variant="primary" />
+</CTA>
+</Section>
+</CodeBlock>

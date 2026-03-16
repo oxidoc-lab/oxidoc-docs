@@ -1,0 +1,104 @@
+---
+title: Troubleshooting — Common Issues and FAQ | Oxidoc
+description: Fix common Oxidoc issues fast. Solutions for port conflicts, missing assets, config errors, hot reload problems, and answers to frequently asked questions.
+---
+
+# Troubleshooting
+
+## Common Issues
+
+### Port Already in Use
+
+```text
+Error: Address already in use (os error 98)
+```
+
+Another process is using port 3000. Use a different port:
+
+```bash
+oxidoc dev -p 8080
+```
+
+Or find and kill the existing process:
+
+```bash
+lsof -i :3000
+kill <PID>
+```
+
+### Config Validation Errors
+
+Oxidoc validates your `oxidoc.toml` and suggests corrections for typos:
+
+```text
+Error: unknown field `colour` in [theme], did you mean `color`?
+```
+
+Check the [Configuration Reference](/docs/configuration) for valid field names.
+
+### Missing Assets
+
+If images or other assets aren't showing up, make sure they're in the `assets/` directory. Oxidoc copies everything in `assets/` to the output directory during build.
+
+```text
+my-docs/
+├── assets/
+│   ├── logo.svg     → /assets/logo.svg
+│   └── images/
+│       └── hero.png → /assets/images/hero.png
+```
+
+### Pages Not Appearing in Sidebar
+
+Pages must be listed in the `navigation` groups in `oxidoc.toml` to appear in the sidebar. Unlisted pages are still built and accessible by URL.
+
+<CodeBlock language="toml" filename="oxidoc.toml">
+groups = [
+  { group = "Getting Started", pages = ["intro", "quickstart"] },
+]
+</CodeBlock>
+
+### Build Warnings About Missing Pages
+
+If `oxidoc build` warns about missing pages, check that:
+
+1. The `.rdx` file exists in the correct directory
+2. The filename matches the slug in `oxidoc.toml` (without the `.rdx` extension)
+3. Nested pages include the subdirectory (e.g., `"guides/styling"` not just `"styling"`)
+
+### Hot Reload Not Working
+
+If changes don't appear in the browser during `oxidoc dev`:
+
+1. Make sure you saved the file
+2. Check the terminal for build errors
+3. Try a hard refresh (Ctrl+Shift+R)
+4. Restart the dev server
+
+### Custom CSS Not Applied
+
+1. Verify the path in `custom_css` is relative to the project root
+2. Check that the CSS file exists
+3. Remember that Oxidoc styles use `@layer oxidoc`, so your custom CSS wins automatically — no `!important` needed
+
+## FAQ
+
+### Can I use Markdown files (.md) instead of .rdx?
+
+No. Oxidoc uses `.rdx` files, which are Markdown with component support. The syntax is the same as Markdown with the addition of embedded components.
+
+### Do I need Node.js or npm?
+
+No. Oxidoc is a single binary with no runtime dependencies. Install it, run it, done.
+
+### How do I add syntax highlighting for a new language?
+
+Syntax highlighting is built in for all common languages. If your language isn't highlighted, use the `language` prop on `CodeBlock` with the language name.
+
+### Can I deploy to my own server?
+
+Yes. Run `oxidoc build` and serve the `dist/` directory with any static file server (nginx, Apache, Caddy, etc.).
+
+### How do I add a custom domain on GitHub Pages?
+
+Add a `CNAME` file in your `assets/` directory with your domain name. Oxidoc copies it to `dist/` automatically.

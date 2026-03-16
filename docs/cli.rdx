@@ -1,0 +1,138 @@
+---
+title: CLI Reference — All Commands and Flags | Oxidoc
+description: Complete CLI reference for Oxidoc. Learn every command — init, dev, build, clean, archive, update — with flags, options, and usage examples.
+---
+
+# CLI Reference
+
+## Global Flags
+
+These flags work with any command:
+
+| Flag | Description |
+|:-----|:------------|
+| `-C, --project <path>` | Project root directory (defaults to current directory) |
+| `-v, --verbose` | Enable verbose output with detailed build steps |
+| `-q, --quiet` | Suppress all output except errors (useful for CI) |
+
+## Commands
+
+### `oxidoc init`
+
+Initialize a new Oxidoc project.
+
+```bash
+oxidoc init my-docs
+```
+
+Creates a directory with a starter `oxidoc.toml`, `home.rdx` landing page, and sample docs.
+
+| Flag | Description |
+|:-----|:------------|
+| `<name>` | Project directory name (optional, defaults to current directory) |
+| `-f, --force` | Force overwrite existing files |
+| `-y, --yes` | Skip confirmation prompts |
+
+### `oxidoc dev`
+
+Start the development server with hot reload.
+
+```bash
+oxidoc dev
+oxidoc dev -p 8080
+```
+
+| Flag | Description |
+|:-----|:------------|
+| `-p, --port <port>` | Port to serve on (default: `3000`) |
+
+Edit any `.rdx` file and the browser refreshes automatically.
+
+### `oxidoc build`
+
+Build the site for production (static site generation).
+
+```bash
+oxidoc build
+oxidoc build -o public
+```
+
+| Flag | Description |
+|:-----|:------------|
+| `-o, --output <dir>` | Output directory (default: `dist`) |
+
+Generates a fully static site with all HTML, CSS, JS, Wasm, and search index files.
+
+### `oxidoc clean`
+
+Remove build artifacts (`.oxidoc-dev/` and `dist/` directories).
+
+```bash
+oxidoc clean
+```
+
+### `oxidoc archive`
+
+Manage versioned documentation archives.
+
+```bash
+# Create an archive from current docs
+oxidoc archive create v1.0
+
+# List all archives
+oxidoc archive list
+
+# Delete an archive
+oxidoc archive delete v1.0
+```
+
+| Subcommand | Description |
+|:-----------|:------------|
+| `create <version>` | Snapshot the current docs as a version archive |
+| `list` | List all available archived versions |
+| `delete <version>` | Delete a specific version archive |
+
+See [Versioning](/docs/versioning) for the full workflow.
+
+### `oxidoc update`
+
+Update to the latest version.
+
+```bash
+oxidoc update
+oxidoc update --pre
+```
+
+| Flag | Description |
+|:-----|:------------|
+| `--pre` | Install the latest prerelease instead of stable |
+
+### `oxidoc set-version`
+
+Switch to a specific version.
+
+```bash
+oxidoc set-version v0.1.0
+```
+
+Downloads and installs the exact version specified.
+
+## Examples
+
+Run dev server from a different directory:
+
+```bash
+oxidoc -C ../my-docs dev
+```
+
+Production build with verbose output to a custom directory:
+
+```bash
+oxidoc -v build -o public
+```
+
+Quiet build for CI:
+
+```bash
+oxidoc -q build
+```

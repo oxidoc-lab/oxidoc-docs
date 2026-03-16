@@ -1,0 +1,236 @@
+---
+title: Built-in Components — Callouts, Tabs, Cards, and More | Oxidoc
+description: Explore every built-in Oxidoc component with live examples. Callouts, tabs, code blocks, accordions, cards, badges, tooltips, banners, and Mermaid diagrams.
+---
+
+# Components
+
+Oxidoc ships a set of built-in components you can use directly in `.rdx` files. Components use HTML-like syntax and can contain Markdown content.
+
+## Callout
+
+Highlighted blocks for notes, warnings, tips, and errors.
+
+| Prop | Type | Default | Description |
+|:-----|:-----|:--------|:------------|
+| `kind` | String | `"info"` | Style: `info`, `warning`, `error`/`danger`, `tip`/`success` |
+| `title` | String | — | Header text |
+| `collapsible` | bool | `false` | Make the callout collapsible |
+
+<Callout kind="info" title="Info">
+This is an informational callout.
+</Callout>
+
+<Callout kind="tip" title="Tip">
+This is a helpful tip.
+</Callout>
+
+<Callout kind="warning" title="Warning">
+Something to be careful about.
+</Callout>
+
+<Callout kind="error" title="Error">
+This highlights an error or danger.
+</Callout>
+
+## Tabs
+
+Switchable content panels. Selection persists via localStorage when a `group` is set.
+
+| Prop | Type | Description |
+|:-----|:-----|:------------|
+| `group` | String | localStorage key for persisting selection across pages |
+
+Each `Tab` takes a `title` prop.
+
+<Tabs>
+<Tab title="npm">
+```bash
+npm install my-package
+```
+</Tab>
+<Tab title="yarn">
+```bash
+yarn add my-package
+```
+</Tab>
+<Tab title="pnpm">
+```bash
+pnpm add my-package
+```
+</Tab>
+</Tabs>
+
+## CodeBlock
+
+Syntax-highlighted code with optional header and line highlighting.
+
+| Prop | Type | Default | Description |
+|:-----|:-----|:--------|:------------|
+| `language` | String | — | Language for syntax highlighting |
+| `filename` | String | — | Filename displayed in the header |
+| `highlight` | String | — | Line numbers to highlight (e.g., `"2"`, `"1,3-5"`) |
+| `line_numbers` | bool | `false` | Show line numbers |
+
+Includes a copy-to-clipboard button.
+
+<CodeBlock language="rust" filename="main.rs" highlight="2">
+fn main() {
+    println!("Hello, Oxidoc!");
+}
+</CodeBlock>
+
+## Accordion
+
+Collapsible sections.
+
+| Prop | Type | Default | Description |
+|:-----|:-----|:--------|:------------|
+| `title` | String | — | Trigger text |
+| `multiple` | bool | `false` | Allow multiple items open simultaneously |
+
+<Accordion title="Click to expand">
+Hidden content goes here. You can put any content inside an accordion.
+</Accordion>
+
+<Accordion title="Another section">
+More hidden content.
+</Accordion>
+
+## CardGrid
+
+Responsive grid of cards.
+
+| Prop | Type | Default | Description |
+|:-----|:-----|:--------|:------------|
+| `columns` | Number | `3` | Number of columns (1-6) |
+
+Each `Card` supports:
+
+| Prop | Type | Description |
+|:-----|:-----|:------------|
+| `title` | String | Card title |
+| `icon` | String | Emoji or icon |
+| `href` | String | Makes the card a link |
+
+<CardGrid>
+<Card title="Getting Started" icon="🚀" href="/docs/quickstart">
+Learn the basics of Oxidoc.
+</Card>
+<Card title="Components" icon="🧩">
+Explore all available components.
+</Card>
+<Card title="Configuration" icon="⚙️">
+Customize your documentation site.
+</Card>
+</CardGrid>
+
+## Steps
+
+Numbered step-by-step instructions with a connecting line.
+
+Each `Step` takes a `title` prop.
+
+<Steps>
+<Step title="Install Oxidoc">
+Run the install script.
+</Step>
+<Step title="Initialize a project">
+Run `oxidoc init my-docs`.
+</Step>
+<Step title="Start writing">
+Create `.rdx` files and run `oxidoc dev`.
+</Step>
+</Steps>
+
+## Badge
+
+Inline status pill.
+
+| Prop | Type | Default | Description |
+|:-----|:-----|:--------|:------------|
+| `variant` | String | `"info"` | Color: `info`, `tip`, `warning`, `danger`, `new`, `deprecated` |
+| `outline` | bool | `false` | Outline style |
+
+This feature is <Badge variant="new">New</Badge> in v0.1.0.
+
+The old API is <Badge variant="deprecated">Deprecated</Badge>.
+
+Status: <Badge variant="tip">Stable</Badge> <Badge variant="warning">Beta</Badge> <Badge variant="danger">Experimental</Badge>
+
+## Tooltip
+
+Hover/focus popup for definitions.
+
+| Prop | Type | Description |
+|:-----|:-----|:------------|
+| `text` | String | Tooltip content |
+
+Oxidoc uses <Tooltip text="WebAssembly — a binary instruction format for stack-based virtual machines">Wasm</Tooltip> for interactive components.
+
+## Tag
+
+Uppercase inline label for categorization.
+
+| Prop | Type | Default | Description |
+|:-----|:-----|:--------|:------------|
+| `variant` | String | `"info"` | Color: `info`, `tip`, `warning`, `danger`, `new`, `experimental`, `deprecated` |
+
+<Tag variant="new">new</Tag> <Tag variant="experimental">experimental</Tag> <Tag variant="deprecated">deprecated</Tag>
+
+## ThemedImage
+
+Swaps images based on color scheme.
+
+| Prop | Type | Description |
+|:-----|:-----|:------------|
+| `light` | String | Image URL for light theme |
+| `dark` | String | Image URL for dark theme |
+| `alt` | String | Alt text |
+| `width` | String | Width |
+| `height` | String | Height |
+
+<ThemedImage light="/assets/logo.svg" dark="/assets/logo.svg" alt="Logo" width="120" />
+
+## Banner
+
+Dismissible announcement bar.
+
+| Prop | Type | Default | Description |
+|:-----|:-----|:--------|:------------|
+| `id` | String | — | Unique ID for persistence |
+| `persist` | String | `"none"` | `"none"`, `"session"`, or `"forever"` |
+| `dismissible` | bool | `true` | Show close button |
+
+<Banner id="demo-banner">
+This is a banner announcement.
+</Banner>
+
+## Embed
+
+Embed external content (iframe).
+
+| Prop | Type | Description |
+|:-----|:-----|:------------|
+| `src` | String | URL to embed |
+| `width` | String | Width |
+| `height` | String | Height |
+
+## Mermaid Diagrams
+
+Use `mermaid` as the language for fenced code blocks:
+
+```mermaid
+graph LR
+    A[Write .rdx] --> B[oxidoc build]
+    B --> C[Static HTML]
+    B --> D[Wasm Islands]
+    C --> E[Deploy]
+    D --> E
+```
+
+No configuration needed — diagrams render automatically.
+
+## Landing Page Components
+
+For `Hero`, `FeatureGrid`, `Section`, `CTA`, and other landing page components, see [Landing Page Components](/docs/components/landing-page).

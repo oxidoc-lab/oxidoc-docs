@@ -1,164 +1,110 @@
 ---
-title: Quickstart
+title: Quickstart — Build Your First Docs Site in 5 Minutes | Oxidoc
+description: Go from zero to a running documentation site in under five minutes. Install Oxidoc, create a project, start the dev server, and build for production.
 ---
 
 # Quickstart
 
-## Writing Content
+Go from zero to a running documentation site in under five minutes.
 
-Create `.rdx` files in the `docs/` directory. RDX is Markdown with embedded components.
+## 1. Install Oxidoc
 
-<Callout kind="warning" title="Heads up">
-Components are embedded directly in your Markdown content. View the source of this page for examples.
-</Callout>
-
-## Components
-
-### Callout
-
-Highlighted blocks for notes, warnings, tips, and errors. Use `title` for the header and `kind` for the style: `info`, `warning`, `error`, `tip`.
-
-<Callout kind="info" title="Info">
-This is an informational callout.
-</Callout>
-
-<Callout kind="tip" title="Tip">
-This is a helpful tip.
-</Callout>
-
-<Callout kind="error" title="Error">
-This highlights an error or danger.
-</Callout>
-
-### Tabs
-
-Switchable content panels. Each `Tab` needs a `title`. Selection persists via localStorage when a `group` is set.
-
-<Tabs>
-<Tab title="npm">
-npm install oxidoc
-</Tab>
-<Tab title="yarn">
-yarn add oxidoc
-</Tab>
-<Tab title="pnpm">
-pnpm add oxidoc
-</Tab>
-</Tabs>
-
-### CodeBlock
-
-Syntax-highlighted code with optional `filename` header, `language` tag, and line `highlight`.
-
-<CodeBlock language="rust" filename="main.rs" highlight="2">
-fn main() {
-    println!("Hello, Oxidoc!");
-}
-</CodeBlock>
-
-### Accordion
-
-Collapsible sections. Use `title` for the trigger text. Multiple accordions are independent by default.
-
-<Accordion title="Click to expand">
-Hidden content goes here. You can put any content inside an accordion.
-</Accordion>
-
-<Accordion title="Another section">
-More hidden content.
-</Accordion>
-
-### CardGrid
-
-Responsive grid of cards. Each `Card` supports `title`, `icon`, `href` (makes it a link), and body content.
-
-<CardGrid>
-<Card title="Getting Started" icon="🚀" href="/docs/quickstart">
-Learn the basics of Oxidoc.
-</Card>
-<Card title="Components" icon="🧩">
-Explore all available components.
-</Card>
-<Card title="Configuration" icon="⚙️">
-Customize your documentation site.
-</Card>
-</CardGrid>
-
-### Steps
-
-Numbered step-by-step instructions with a connecting line. Each `Step` takes a `title`.
-
-<Steps>
-<Step title="Install Oxidoc">
-Run `cargo install oxidoc-cli` or use your package manager.
-</Step>
-<Step title="Initialize a project">
-Run `oxidoc init my-docs` to scaffold a new documentation site.
-</Step>
-<Step title="Start writing">
-Create `.rdx` files in the `docs/` directory and run `oxidoc dev`.
-</Step>
-</Steps>
-
-### Badge
-
-Inline status pill. Use `variant` to set the color: `info`, `tip`, `warning`, `danger`, `new`, `deprecated`.
-
-This feature is <Badge variant="new">New</Badge> in v2.0.
-
-The old API is <Badge variant="deprecated">Deprecated</Badge>.
-
-Status: <Badge variant="tip">Stable</Badge> <Badge variant="warning">Beta</Badge> <Badge variant="danger">Experimental</Badge>
-
-### Tooltip
-
-Hover/focus popup for definitions or abbreviations. Set the tooltip content with the `text` prop.
-
-Oxidoc uses <Tooltip text="WebAssembly — a binary instruction format for stack-based virtual machines">Wasm</Tooltip> for interactive components.
-
-### Tag
-
-Uppercase inline label for categorization. Use `variant` to set the color: `info`, `tip`, `warning`, `danger`, `new`, `experimental`, `deprecated`.
-
-<Tag variant="new">new</Tag> <Tag variant="experimental">experimental</Tag> <Tag variant="deprecated">deprecated</Tag>
-
-### ThemedImage
-
-Swaps images based on the user's color scheme. Use `light` and `dark` for the two sources. Supports `width`, `height`, and `alt`.
-
-<ThemedImage light="/assets/logo.svg" dark="/assets/logo.svg" alt="Logo" width="120" />
-
-### Banner
-
-Dismissible announcement bar. The `persist` prop controls what happens after dismissing:
-
-- `none` (default) — reappears on every page load
-- `session` — stays dismissed for the browser session
-- `forever` — stays dismissed permanently
-
-Set `dismissible` to `false` to remove the close button entirely.
-
-<Banner id="welcome-banner">
-Welcome to the Oxidoc documentation! Star us on GitHub.
-</Banner>
-
-### Mermaid
-
-Diagrams rendered automatically from fenced code blocks with `mermaid` as the language.
-
-```mermaid
-graph LR
-    A[Write .rdx] --> B[oxidoc build]
-    B --> C[Static HTML]
-    B --> D[Wasm Islands]
-    C --> E[Deploy]
-    D --> E
+```bash
+curl -fsSL https://raw.githubusercontent.com/oxidoc-lab/oxidoc/main/install.sh | sh
 ```
 
-## Development Server
+See [Installation](/docs/installation) for other options.
 
-Run `oxidoc dev` to start a local server with hot reload. Edit any `.rdx` file and the browser refreshes automatically.
+## 2. Create a Project
 
-## Building for Production
+```bash
+oxidoc init my-docs
+cd my-docs
+```
 
-Run `oxidoc build` and your site is generated in `dist/` — deploy it anywhere.
+This creates a directory with a starter `oxidoc.toml`, a `home.rdx` landing page, and a `docs/` directory with sample content.
+
+## 3. Start the Dev Server
+
+```bash
+oxidoc dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser. You'll see the starter site with a landing page and sample documentation.
+
+The dev server watches for changes and rebuilds automatically:
+
+- `.rdx` files in all content directories
+- `oxidoc.toml` configuration
+- `assets/` directory (custom CSS, images, JS)
+- Root-level `.rdx` files (`home.rdx`, etc.)
+
+## 4. Edit Content
+
+Open `docs/quickstart.rdx` in your editor and make a change. Save the file — the browser refreshes automatically.
+
+RDX files are Markdown with embedded components. For example:
+
+<CodeBlock language="markdown" filename="docs/intro.rdx">
+---
+title: Introduction
+---
+
+# Introduction
+
+Welcome to my docs. Here's a tip:
+
+<Callout kind="tip" title="Hot reload">
+Edit any `.rdx` file and the browser refreshes automatically.
+</Callout>
+</CodeBlock>
+
+See [Writing Content](/docs/writing-content) for the full guide on RDX syntax.
+
+## 5. Add a New Page
+
+Create a new file `docs/guide.rdx`:
+
+<CodeBlock language="markdown" filename="docs/guide.rdx">
+---
+title: Guide
+---
+
+# Guide
+
+Your content here.
+</CodeBlock>
+
+Then add it to the navigation in `oxidoc.toml`:
+
+<CodeBlock language="toml" filename="oxidoc.toml">
+navigation = [
+  { path = "/docs", dir = "docs", groups = [
+    { group = "Getting Started", pages = ["quickstart", "guide"] },
+  ] },
+]
+</CodeBlock>
+
+Save the file and the dev server rebuilds automatically — the new page appears in the sidebar.
+
+## 6. Build for Production
+
+```bash
+oxidoc build
+```
+
+The output is a fully static site in `dist/`. Deploy it to any static host — see [Deployment](/docs/deployment) for guides on GitHub Pages, Vercel, and Netlify.
+
+## Next Steps
+
+<CardGrid>
+<Card title="Writing Content" icon="✏️" href="/docs/writing-content">
+Learn RDX syntax, frontmatter, and file organization.
+</Card>
+<Card title="Components" icon="🧩" href="/docs/components">
+Explore all built-in components with examples.
+</Card>
+<Card title="Configuration" icon="⚙️" href="/docs/configuration">
+Full reference for oxidoc.toml.
+</Card>
+</CardGrid>

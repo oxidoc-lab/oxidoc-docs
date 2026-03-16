@@ -1,0 +1,234 @@
+---
+title: SEO — Meta Tags, Structured Data, and AI Readability | Oxidoc
+description: Oxidoc auto-generates Open Graph tags, Twitter cards, JSON-LD structured data, canonical URLs, sitemaps, and llms.txt. Learn how to optimize every page.
+---
+
+# SEO
+
+Oxidoc automatically generates comprehensive SEO metadata for every page. No plugins or configuration required — just set `base_url` in your config and Oxidoc handles the rest.
+
+## What Oxidoc Generates Automatically
+
+Every page includes the following in `<head>`:
+
+```html
+<!-- Basic meta -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Page Title</title>
+<meta name="description" content="Page description...">
+<meta name="generator" content="oxidoc">
+
+<!-- Open Graph -->
+<meta property="og:title" content="Page Title">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://example.com/docs/page">
+<meta property="og:site_name" content="My Project">
+<meta property="og:description" content="Page description...">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Page Title">
+
+<!-- Canonical URL -->
+<link rel="canonical" href="https://example.com/docs/page">
+
+<!-- JSON-LD Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Page Title",
+  "description": "Page description...",
+  "url": "https://example.com/docs/page",
+  "site": { "name": "My Project" }
+}
+</script>
+```
+
+All of this is generated from your page content and `oxidoc.toml` config — no manual meta tags needed.
+
+## Page Title and Description
+
+### Title
+
+The page title comes from the first `<h1>` heading in your content. It's used for `<title>`, `og:title`, `twitter:title`, and JSON-LD `name`.
+
+Write titles that are:
+- Under 60 characters to avoid truncation in search results
+- Front-loaded with the primary keyword
+- Unique across all pages
+
+### Description
+
+The meta description is **auto-extracted from the first paragraph** of your page content, truncated to 160 characters.
+
+Write your opening paragraph with SEO in mind — it becomes your search snippet. Make it:
+- 150–160 characters with a clear summary of the page
+- Action-oriented ("Learn how to...", "Configure...", "Set up...")
+- Unique per page to avoid internal competition
+
+<Callout kind="tip" title="First paragraph matters">
+Since Oxidoc uses your first paragraph as the meta description, craft it like a micro-advertisement for the page. This is what appears in Google results and social shares.
+</Callout>
+
+## Open Graph Tags
+
+Open Graph tags control how your pages appear when shared on social platforms (Facebook, LinkedIn, Slack, Discord).
+
+Oxidoc generates these automatically:
+
+| Tag | Source |
+|:----|:-------|
+| `og:title` | First `<h1>` heading |
+| `og:description` | First paragraph (160 chars) |
+| `og:url` | `base_url` + page path |
+| `og:type` | `article` |
+| `og:site_name` | `project.name` from config |
+
+### Adding og:image
+
+Oxidoc doesn't generate `og:image` automatically, but you can add it per-page using the `<Head>` component:
+
+<CodeBlock language="markdown" filename="docs/intro.rdx">
+<Head>
+<meta property="og:image" content="https://example.com/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+</Head>
+
+# Introduction
+
+Your page content here.
+</CodeBlock>
+
+For a site-wide social image, add it to every page or create a shared component.
+
+## Twitter Cards
+
+Oxidoc generates `twitter:card` (set to `summary`) and `twitter:title` for every page. Add more Twitter meta tags with `<Head>`:
+
+```markdown
+<Head>
+<meta name="twitter:image" content="https://example.com/card.png">
+<meta name="twitter:site" content="@yourhandle">
+<meta name="twitter:description" content="Custom Twitter description">
+</Head>
+```
+
+## The `<Head>` Component
+
+The `<Head>` component lets you inject any HTML into the `<head>` of a page. Use it for custom meta tags, preload hints, alternate language links, or anything Oxidoc doesn't generate automatically.
+
+```markdown
+<Head>
+<meta property="og:image" content="/social-card.png">
+<meta name="keywords" content="rust, documentation, static site">
+<meta name="author" content="Your Name">
+<link rel="alternate" hreflang="es" href="/es/docs/intro">
+<link rel="preload" href="/fonts/custom.woff2" as="font" type="font/woff2" crossorigin>
+</Head>
+```
+
+Content inside `<Head>` is moved from the body to `<head>` during rendering. Only raw HTML is supported — no components inside `<Head>`.
+
+## JSON-LD Structured Data
+
+Every page includes a `WebPage` JSON-LD block with `@context`, `@type`, `name`, `description`, `url`, and `site.name`. This helps search engines and AI systems understand your content structure.
+
+The structured data is generated from:
+- Page title (from `<h1>`)
+- Page description (from first paragraph, or `project.description`)
+- Full URL (from `base_url` + slug)
+- Site name (from `project.name`)
+
+## Canonical URLs
+
+When `base_url` is set in `oxidoc.toml`, every page gets a `<link rel="canonical">` tag. This prevents duplicate content issues when the same page is accessible at multiple URLs.
+
+<CodeBlock language="toml" filename="oxidoc.toml">
+[project]
+base_url = "https://example.com"
+</CodeBlock>
+
+## Auto-Generated SEO Files
+
+### sitemap.xml
+
+Generated automatically with URLs for every page in your navigation. Search engines use this to discover and index your content.
+
+### robots.txt
+
+Generated with permissive defaults:
+
+```text
+User-agent: *
+Allow: /
+
+Sitemap: https://example.com/sitemap.xml
+```
+
+### Atom Feed (feed.xml)
+
+An Atom feed of all documentation pages. Each entry includes the first paragraph as a summary. Useful for RSS readers and content aggregators.
+
+### llms.txt and llms-full.txt
+
+Machine-readable files for AI tools and RAG pipelines. See [llms.txt](/docs/ai/llms-txt) for details.
+
+## Versioned Content and SEO
+
+Archived (non-default) versions automatically get:
+
+```html
+<meta name="robots" content="noindex, nofollow">
+```
+
+This prevents search engines from indexing outdated documentation while keeping it accessible to users who navigate to it directly.
+
+## Edit Links
+
+Connect each page to its source for transparency and community contributions:
+
+<CodeBlock language="toml" filename="oxidoc.toml">
+[project]
+edit_url = "https://github.com/org/repo/blob/main/docs"
+edit_label = "Edit this page"
+</CodeBlock>
+
+Each page shows a link to its source file, encouraging contributions and signaling content freshness.
+
+## Redirects
+
+Set up redirects for moved or renamed pages to preserve link equity:
+
+<CodeBlock language="toml" filename="oxidoc.toml">
+[redirects]
+redirects = [
+  { from = "/old-page", to = "/new-page" },
+]
+</CodeBlock>
+
+Each redirect generates an HTML file with `<meta http-equiv="refresh">`.
+
+## SEO Checklist
+
+Use this checklist when writing documentation pages:
+
+<Steps>
+<Step title="Write a descriptive first paragraph">
+This becomes your meta description. Keep it under 160 characters, action-oriented, and unique per page.
+</Step>
+<Step title="Use a clear, keyword-rich H1">
+The `<h1>` becomes your `<title>`, `og:title`, and JSON-LD name. Front-load the primary keyword.
+</Step>
+<Step title="Set base_url in config">
+Required for canonical URLs, sitemap, feeds, and absolute OG URLs.
+</Step>
+<Step title="Add og:image for key pages">
+Use the `<Head>` component to add social sharing images, especially for landing pages and high-traffic docs.
+</Step>
+<Step title="Keep titles unique">
+Every page must have a unique `<h1>` to avoid competing with your own pages in search results.
+</Step>
+</Steps>

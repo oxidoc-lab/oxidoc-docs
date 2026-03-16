@@ -1,8 +1,9 @@
 ---
-title: Styling
+title: Theming — CSS Variables, Dark Mode, and Custom Styles | Oxidoc
+description: Customize every visual aspect of your Oxidoc site. Override 50+ CSS variables for colors, typography, layout, shadows, and transitions. Dark mode included.
 ---
 
-# Styling
+# Theming
 
 Oxidoc is styled entirely with CSS custom properties (`--oxidoc-*` variables). Override any variable to customize your site — from a single color change to a complete visual redesign.
 
@@ -29,6 +30,16 @@ dark_mode = "system"
 
 These fields are convenience shortcuts. For full control, use custom CSS.
 
+## Dark Mode
+
+The `dark_mode` setting controls initial behavior:
+
+- `"system"` — follows OS preference via `prefers-color-scheme`, with a toggle in the header
+- `"light"` — always light mode
+- `"dark"` — always dark mode
+
+In `system` mode, users can toggle manually. The preference is stored in the browser.
+
 ## Custom CSS
 
 Load one or more CSS files that override any `--oxidoc-*` variable:
@@ -45,8 +56,6 @@ Files are concatenated in order. All Oxidoc styles are wrapped in `@layer oxidoc
 Every visual property in Oxidoc is controlled by a CSS variable. Override them in `:root` for light mode and `[data-theme="dark"]` for dark mode.
 
 ### Core Colors
-
-The fundamental palette. Changing these affects the entire site.
 
 <CodeBlock language="css" filename="assets/custom.css">
 :root {
@@ -74,22 +83,22 @@ The fundamental palette. Changing these affects the entire site.
 
 ### Primary Color Shades
 
-Auto-generated from your primary color using `color-mix()`. Use these for hover states, subtle backgrounds, and emphasis levels without picking extra colors.
+Auto-generated from your primary color using `color-mix()`:
 
-<CodeBlock language="css">
+```css
 :root {
   --oxidoc-primary-light    /* 70% primary + white */
   --oxidoc-primary-dark     /* 70% primary + black */
   --oxidoc-primary-lighter  /* 40% primary + white */
   --oxidoc-primary-darker   /* 40% primary + black */
 }
-</CodeBlock>
+```
 
 These adapt automatically when you change `--oxidoc-primary`.
 
 ### Semantic Colors
 
-Used by callouts, badges, tags, API method badges, and status indicators. Each has a base color and a text-contrast variant.
+Used by callouts, badges, tags, API method badges, and status indicators:
 
 <CodeBlock language="css" filename="assets/custom.css">
 :root {
@@ -108,25 +117,24 @@ All semantic colors have dark mode variants applied automatically.
 
 <CodeBlock language="css" filename="assets/custom.css">
 :root {
-  --oxidoc-text-muted: #6b7280;          /* Subdued text (anchors, labels) */
-  --oxidoc-bg-subtle: #f3f4f6;           /* Subtle background tint */
-  --oxidoc-on-primary: #fff;             /* Text on primary-colored backgrounds */
-  --oxidoc-shadow: rgba(0, 0, 0, 0.1);   /* Base shadow color */
-  --oxidoc-overlay: rgba(0, 0, 0, 0.4);  /* Modal/dialog backdrop */
+  --oxidoc-text-muted: #6b7280;
+  --oxidoc-bg-subtle: #f3f4f6;
+  --oxidoc-on-primary: #fff;
+  --oxidoc-shadow: rgba(0, 0, 0, 0.1);
+  --oxidoc-overlay: rgba(0, 0, 0, 0.4);
 }
 </CodeBlock>
 
 ### Callout Customization
 
-Each callout type exposes its own variables for fine-grained control:
+Each callout type exposes its own variables:
 
 <CodeBlock language="css" filename="assets/custom.css">
-/* Override a specific callout type */
 .oxidoc-callout-warning {
-  --oxidoc-callout-color: #ea580c;     /* Border + tint base color */
-  --oxidoc-callout-bg: #fff7ed;        /* Background */
-  --oxidoc-callout-border: #ea580c;    /* Left border */
-  --oxidoc-callout-text: #1e293b;      /* Text color */
+  --oxidoc-callout-color: #ea580c;
+  --oxidoc-callout-bg: #fff7ed;
+  --oxidoc-callout-border: #ea580c;
+  --oxidoc-callout-text: #1e293b;
 }
 </CodeBlock>
 
@@ -143,10 +151,10 @@ Each callout type exposes its own variables for fine-grained control:
 
 <CodeBlock language="css" filename="assets/custom.css">
 :root {
-  --oxidoc-content-max: 48rem;       /* Max width of main content area */
-  --oxidoc-sidebar-width: 16rem;     /* Sidebar width */
-  --oxidoc-toc-width: 14rem;         /* Table of contents width */
-  --oxidoc-header-height: 3.5rem;    /* Header bar height */
+  --oxidoc-content-max: 48rem;
+  --oxidoc-sidebar-width: 16rem;
+  --oxidoc-toc-width: 14rem;
+  --oxidoc-header-height: 3.5rem;
 }
 </CodeBlock>
 
@@ -162,19 +170,15 @@ Each callout type exposes its own variables for fine-grained control:
 
 ### Shadows
 
-Three elevation levels. Dark mode uses higher opacity for visibility.
-
 <CodeBlock language="css" filename="assets/custom.css">
 :root {
-  --oxidoc-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);    /* Subtle: buttons, cards */
-  --oxidoc-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);     /* Medium: dropdowns, popups */
-  --oxidoc-shadow-lg: 0 12px 36px rgba(0, 0, 0, 0.15);   /* Large: modals, dialogs */
+  --oxidoc-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --oxidoc-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --oxidoc-shadow-lg: 0 12px 36px rgba(0, 0, 0, 0.15);
 }
 </CodeBlock>
 
 ### Z-Index
-
-Control stacking order of fixed/absolute elements:
 
 <CodeBlock language="css" filename="assets/custom.css">
 :root {
@@ -189,14 +193,12 @@ Control stacking order of fixed/absolute elements:
 
 ### Transitions
 
-Four timing presets used across all components. Override these to make the entire site feel faster or slower:
-
 <CodeBlock language="css" filename="assets/custom.css">
 :root {
-  --oxidoc-transition-fast: 0.15s ease;                          /* Hover states */
-  --oxidoc-transition-normal: 0.25s ease;                        /* Sidebar, header */
-  --oxidoc-transition-slow: 0.4s ease;                           /* Page-level changes */
-  --oxidoc-transition-spring: 0.5s cubic-bezier(0.19, 1, 0.22, 1); /* Elastic feel */
+  --oxidoc-transition-fast: 0.15s ease;
+  --oxidoc-transition-normal: 0.25s ease;
+  --oxidoc-transition-slow: 0.4s ease;
+  --oxidoc-transition-spring: 0.5s cubic-bezier(0.19, 1, 0.22, 1);
 }
 </CodeBlock>
 

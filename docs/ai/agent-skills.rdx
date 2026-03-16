@@ -1,0 +1,473 @@
+---
+title: Oxidoc Skills for AI Agents — Claude, Codex, Cursor | Oxidoc
+description: Copy-paste these skill prompts to teach AI coding agents how to use Oxidoc. Works with Claude Code, Codex, Cursor, Windsurf, and any LLM-powered tool.
+---
+
+# Oxidoc Skills for AI Agents
+
+AI coding agents like Claude Code, Codex, and Cursor have no built-in knowledge of Oxidoc. These ready-made skill prompts give them everything they need — paste one into your agent's context and it can create, edit, and build Oxidoc sites.
+
+## How to Use
+
+1. Copy the skill prompt you need
+2. Paste it into your AI agent's instructions:
+   - **Claude Code** — add to `CLAUDE.md` in your project root
+   - **Cursor** — add to `.cursorrules`
+   - **Codex** — add to `AGENTS.md`
+   - **Windsurf** — add to `.windsurfrules`
+   - **Other** — paste into the system prompt or project instructions
+
+## Full Oxidoc Skill
+
+This single prompt covers the CLI, RDX syntax, configuration, and components. Copy the entire block.
+
+<Accordion title="Full Oxidoc Skill — click to expand">
+
+<CodeBlock language="markdown" filename="CLAUDE.md">
+# Oxidoc Documentation Engine
+
+## What is Oxidoc
+Oxidoc is a documentation engine written in Rust. It generates static documentation sites from `.rdx` files (Markdown with embedded components). Zero Node.js dependency — single binary.
+
+## CLI Commands
+
+```bash
+# Initialize a new project
+oxidoc init my-docs
+
+# Start dev server with hot reload (default port 3000)
+oxidoc dev
+oxidoc dev -p 8080
+
+# Build for production (output to dist/)
+oxidoc build
+oxidoc build -o public
+
+# Remove build artifacts
+oxidoc clean
+
+# Version management
+oxidoc archive create v1.0    # Snapshot current docs
+oxidoc archive list            # List archived versions
+oxidoc archive delete v1.0    # Delete an archive
+oxidoc update                  # Update to latest stable
+oxidoc update --pre            # Update to latest prerelease
+oxidoc set-version v0.1.0     # Pin specific version
+
+# Global flags
+# -C <path>   Project directory
+# -v          Verbose output
+# -q          Quiet (errors only)
+```
+
+## RDX File Format
+
+RDX files are Markdown with YAML frontmatter and embedded components:
+
+```rdx
+---
+title: Page Title
+description: Meta description for SEO (150-160 chars)
+layout: landing  # Optional: removes sidebar for landing pages
+---
+
+# Heading
+
+Standard **Markdown** with [links](url), `code`, lists, tables, etc.
+
+<Callout kind="info" title="Note">
+Callout content. Kinds: info, warning, error/danger, tip/success.
+</Callout>
+
+<Tabs>
+<Tab title="Tab 1">Content one</Tab>
+<Tab title="Tab 2">Content two</Tab>
+</Tabs>
+
+<CodeBlock language="rust" filename="main.rs" highlight="2">
+fn main() {
+    println!("Hello!");
+}
+</CodeBlock>
+
+<Accordion title="Click to expand">
+Hidden content.
+</Accordion>
+
+<CardGrid>
+<Card title="Card" icon="🚀" href="/link">Description.</Card>
+</CardGrid>
+
+<Steps>
+<Step title="First">Do this.</Step>
+<Step title="Second">Then this.</Step>
+</Steps>
+
+<Badge variant="new">New</Badge>
+<Badge variant="deprecated">Deprecated</Badge>
+<Tag variant="experimental">experimental</Tag>
+<Tooltip text="Explanation here">hover text</Tooltip>
+
+<Banner id="unique-id" persist="session">
+Announcement text.
+</Banner>
+
+<ThemedImage light="/light.png" dark="/dark.png" alt="Logo" />
+
+<Head>
+<meta property="og:image" content="/social-card.png">
+</Head>
+```
+
+Mermaid diagrams use fenced code blocks with `mermaid` language.
+
+## Landing Page Components
+
+Set `layout: landing` in frontmatter, then use:
+
+```rdx
+<Hero title="Project Name">
+<HeroAction label="Get Started" href="/docs/quickstart" variant="primary" />
+<HeroAction label="GitHub" href="https://github.com/..." variant="secondary" />
+Tagline text here.
+</Hero>
+
+<Section bg="muted">
+<FeatureGrid>
+<Feature icon="⚡" title="Fast">Description.</Feature>
+</FeatureGrid>
+</Section>
+
+<CTA title="Ready?" description="Get started now.">
+<HeroAction label="Install" href="/docs/install" variant="primary" />
+</CTA>
+
+<TestimonialGrid>
+<Testimonial name="Jane" role="Dev">Great tool.</Testimonial>
+</TestimonialGrid>
+```
+
+## Configuration (oxidoc.toml)
+
+```toml
+[project]
+name = "Project Name"
+description = "Site description for SEO"
+logo = "/assets/logo.svg"
+base_url = "https://example.com"
+edit_url = "https://github.com/org/repo/blob/main/docs"
+edit_label = "Edit this page"
+
+[theme]
+primary = "#3b82f6"
+accent = "#f59e0b"
+font = "Inter, sans-serif"
+code_font = "JetBrains Mono, monospace"
+dark_mode = "system"  # "system", "light", or "dark"
+custom_css = ["assets/custom.css"]
+
+[routing.root]
+homepage = "home.rdx"
+# pages = ["about.rdx"]
+
+[routing]
+header_links = [
+  { label = "Docs", href = "/docs" },
+  { label = "API", href = "/api" },
+]
+navigation = [
+  { path = "/docs", dir = "docs", groups = [
+    { group = "Getting Started", pages = ["quickstart", "guide"] },
+    { group = "Advanced", pages = ["config", "plugins"] },
+  ] },
+  { path = "/api", openapi = "./openapi.yaml" },
+]
+
+[search]
+# provider = "oxidoc"  # Default, zero-config BM25 search
+# semantic = true       # Enable semantic search
+# For Algolia: provider = "algolia", app_id, api_key, index_name
+# For Typesense: provider = "typesense", host, port, protocol, api_key, collection_name
+# For Meilisearch: provider = "meilisearch", host, api_key, index_name
+
+[versioning]
+# default = "v2.0"
+# versions = ["v1.0", "v2.0"]
+
+[i18n]
+# default_locale = "en"
+# locales = ["en", "ja", "es"]
+# translation_dir = "i18n"
+
+[footer]
+copyright_owner = "Your Name"
+# links = [{ label = "Privacy", href = "/privacy" }]
+
+[social]
+github = "https://github.com/org/repo"
+# discord = "https://discord.gg/invite"
+
+[analytics]
+# google_analytics = "G-XXXXXXXXXX"
+# script = '<script defer src="https://plausible.io/js/script.js"></script>'
+
+[redirects]
+# redirects = [{ from = "/old", to = "/new" }]
+
+[components.custom]
+# MyWidget = "assets/js/my-widget.js"
+
+[attribution]
+oxidoc = true  # "Built with Oxidoc" in footer
+```
+
+## File Structure
+
+```
+project/
+├── oxidoc.toml        # Configuration
+├── home.rdx           # Landing page (layout: landing)
+├── assets/            # Static assets (copied to dist/)
+├── docs/              # Content directory
+│   ├── intro.rdx
+│   ├── guide.rdx
+│   └── advanced/
+│       └── plugins.rdx
+└── i18n/              # Translation files (if i18n enabled)
+    ├── en.ftl
+    └── ja.ftl
+```
+
+## Auto-Generated Output
+
+`oxidoc build` produces in `dist/`:
+- Static HTML for every page
+- Wasm islands for interactive components
+- Search index (chunked for lazy loading)
+- sitemap.xml, robots.txt, feed.xml
+- llms.txt, llms-full.txt (for AI/RAG)
+- Redirect HTML files (if configured)
+
+## Key Rules
+- Content files use `.rdx` extension (NOT `.md` or `.mdx`)
+- Components use PascalCase: `<Callout>`, `<CodeBlock>`, `<CardGrid>`
+- Pages appear in sidebar only if listed in navigation groups
+- CSS overrides use `--oxidoc-*` variables (e.g., `--oxidoc-primary`)
+- Custom CSS always wins over built-in styles (no !important needed)
+- The `<Head>` component injects custom HTML into `<head>`
+- **Code blocks:** Use standard fenced code blocks (```lang) for plain code. Only use `<CodeBlock>` when you need `filename`, `highlight`, or `line_numbers` props. Example:
+  - Plain code → ```bash\noxidoc build\n```
+  - With filename → `<CodeBlock language="toml" filename="oxidoc.toml">...</CodeBlock>`
+  - With highlighting → `<CodeBlock language="rust" highlight="2">...</CodeBlock>`
+</CodeBlock>
+
+</Accordion>
+
+## Skill: RDX Content Writer
+
+Focused on writing `.rdx` content pages. Use this when you only need the agent to create or edit documentation content, not configure the site.
+
+<Accordion title="RDX Content Writer Skill — click to expand">
+
+<CodeBlock language="markdown" filename="CLAUDE.md">
+# RDX Content Writing
+
+## Format
+RDX files are Markdown with YAML frontmatter and embedded components. Extension: `.rdx`
+
+## Frontmatter (required)
+```yaml
+---
+title: Page Title — Descriptive Hook | Brand
+description: 150-160 char meta description with action verb and CTA.
+---
+```
+
+## Code Blocks
+Use standard fenced code blocks (```lang) for plain code snippets.
+Only use `<CodeBlock>` component when you need `filename`, `highlight`, or `line_numbers` props:
+- Plain: ```bash\noxidoc build\n```
+- With filename: `<CodeBlock language="toml" filename="oxidoc.toml">content</CodeBlock>`
+- With highlight: `<CodeBlock language="rust" highlight="2">content</CodeBlock>`
+
+## Available Components
+
+Callout: `<Callout kind="info|warning|error|tip" title="Title">Content</Callout>`
+Tabs: `<Tabs><Tab title="Label">Content</Tab></Tabs>`
+CodeBlock: `<CodeBlock language="rust" filename="file.rs" highlight="2">code</CodeBlock>` (only with filename/highlight/line_numbers)
+Accordion: `<Accordion title="Label">Content</Accordion>`
+CardGrid: `<CardGrid><Card title="T" icon="🚀" href="/link">Desc</Card></CardGrid>`
+Steps: `<Steps><Step title="First">Content</Step></Steps>`
+Badge: `<Badge variant="new|deprecated|tip|warning|danger">Label</Badge>`
+Tag: `<Tag variant="new|experimental|deprecated">label</Tag>`
+Tooltip: `<Tooltip text="Explanation">hover text</Tooltip>`
+Banner: `<Banner id="unique" persist="none|session|forever">Text</Banner>`
+ThemedImage: `<ThemedImage light="/l.png" dark="/d.png" alt="Alt" />`
+Head: `<Head><meta property="og:image" content="/img.png"></Head>`
+
+Mermaid: use fenced code block with `mermaid` language.
+
+## SEO Rules
+- Title: under 60 chars, front-load keyword, format "Primary — Hook | Brand"
+- Description: 150-160 chars, action verb, unique per page
+- First paragraph = meta description (auto-extracted, max 160 chars)
+- Every page must have unique title and description
+
+## Markdown
+Standard Markdown: headings (#-######), bold, italic, links, images, lists, tables, code blocks, blockquotes, horizontal rules. Headings auto-generate anchor links.
+</CodeBlock>
+
+</Accordion>
+
+## Skill: Oxidoc CLI Operator
+
+For CI/CD automation or when the agent needs to run Oxidoc commands.
+
+<Accordion title="CLI Operator Skill — click to expand">
+
+<CodeBlock language="markdown" filename="CLAUDE.md">
+# Oxidoc CLI
+
+Binary: `oxidoc` (single binary, no runtime deps)
+
+## Install
+```bash
+curl -fsSL https://raw.githubusercontent.com/oxidoc-lab/oxidoc/main/install.sh | sh
+```
+
+## Commands
+```
+oxidoc init [name]              Create new project (-f force, -y skip prompts)
+oxidoc dev [-p port]            Dev server with hot reload (default: 3000)
+oxidoc build [-o dir]           Production build (default output: dist/)
+oxidoc clean                    Remove .oxidoc-dev/ and dist/
+oxidoc archive create <ver>     Snapshot docs as version archive
+oxidoc archive list             List archives
+oxidoc archive delete <ver>     Delete archive
+oxidoc update [--pre]           Update binary (--pre for prerelease)
+oxidoc set-version <ver>        Pin specific version
+```
+
+## Global Flags
+```
+-C, --project <path>    Project root directory
+-v, --verbose           Detailed output
+-q, --quiet             Errors only (CI mode)
+```
+
+## CI Example (GitHub Actions)
+```yaml
+- run: curl -fsSL https://raw.githubusercontent.com/oxidoc-lab/oxidoc/main/install.sh | sh
+- run: oxidoc build
+```
+
+## Output
+`oxidoc build` generates a fully static site in dist/ — HTML, CSS, JS, Wasm, search index, sitemap, llms.txt. Serve with any static host.
+</CodeBlock>
+
+</Accordion>
+
+## Skill: Oxidoc Site Configurator
+
+For when the agent needs to set up or modify `oxidoc.toml`.
+
+<Accordion title="Site Configurator Skill — click to expand">
+
+<CodeBlock language="markdown" filename="CLAUDE.md">
+# Oxidoc Configuration (oxidoc.toml)
+
+## Minimal Config
+```toml
+[project]
+name = "My Docs"
+
+[routing.root]
+homepage = "home.rdx"
+
+[routing]
+navigation = [
+  { path = "/docs", dir = "docs", groups = [
+    { group = "Guide", pages = ["intro", "quickstart"] },
+  ] },
+]
+```
+
+## All Sections
+
+[project] — name (required), description, logo, base_url, edit_url, edit_label, debug_islands
+[theme] — primary, accent, font, code_font, dark_mode ("system"|"light"|"dark"), custom_css
+[routing.root] — homepage (rdx file), pages (additional root pages)
+[routing] — header_links [{label, href}], navigation [{path, dir, groups [{group, pages}], openapi}]
+[search] — provider ("oxidoc"|"algolia"|"typesense"|"meilisearch"|"custom"), semantic (bool), model_path
+  Algolia: app_id, api_key, index_name
+  Typesense: host, port, protocol, api_key, collection_name
+  Meilisearch: host, api_key, index_name
+  Custom: stylesheet, script, init_script
+[versioning] — default, versions
+[i18n] — default_locale, locales, translation_dir
+[footer] — copyright_owner, copyright_owner_url, links [{label, href}]
+[social] — github, discord, twitter, mastodon
+[analytics] — google_analytics, script
+[redirects] — redirects [{from, to}]
+[components.custom] — TagName = "path/to/file.js"
+[attribution] — oxidoc (bool, default true)
+
+## Navigation Rules
+- `path` = URL prefix ("/docs", "/api")
+- `dir` = content directory for .rdx files
+- `groups` = sidebar sections, each with `group` (title) and `pages` (slug list)
+- `openapi` = path to OpenAPI spec (auto-generates API pages)
+- Pages must be listed in groups to appear in sidebar
+- Nested pages: "guides/styling" maps to docs/guides/styling.rdx
+</CodeBlock>
+
+</Accordion>
+
+## Skill: Oxidoc Theme Customizer
+
+For when the agent needs to customize the visual design.
+
+<Accordion title="Theme Customizer Skill — click to expand">
+
+<CodeBlock language="markdown" filename="CLAUDE.md">
+# Oxidoc Theming
+
+## Quick (oxidoc.toml)
+```toml
+[theme]
+primary = "#3b82f6"
+accent = "#f59e0b"
+dark_mode = "system"
+custom_css = ["assets/custom.css"]
+```
+
+## CSS Variables (override in custom CSS)
+All styles use `@layer oxidoc` — your CSS always wins, no !important needed.
+
+Core: --oxidoc-primary, --oxidoc-accent, --oxidoc-bg, --oxidoc-bg-secondary, --oxidoc-text, --oxidoc-text-secondary, --oxidoc-border, --oxidoc-code-bg
+Semantic: --oxidoc-success, --oxidoc-warning, --oxidoc-error, --oxidoc-info, --oxidoc-new, --oxidoc-deprecated (each has -text variant)
+Utility: --oxidoc-text-muted, --oxidoc-bg-subtle, --oxidoc-on-primary, --oxidoc-shadow, --oxidoc-overlay
+Typography: --oxidoc-font-sans, --oxidoc-font-mono
+Layout: --oxidoc-content-max (48rem), --oxidoc-sidebar-width (16rem), --oxidoc-toc-width (14rem), --oxidoc-header-height (3.5rem)
+Radius: --oxidoc-radius-sm/md/lg
+Shadows: --oxidoc-shadow-sm/md/lg
+Z-index: --oxidoc-z-tooltip(10), z-back-to-top(50), z-sidebar(90), z-header(100), z-skip-nav(200), z-overlay(1000)
+Transitions: --oxidoc-transition-fast/normal/slow/spring
+
+## Dark mode
+Override in `[data-theme="dark"]` selector. Primary shades auto-generate via color-mix().
+```css
+:root { --oxidoc-primary: #2563eb; }
+[data-theme="dark"] { --oxidoc-primary: #3b82f6; }
+```
+</CodeBlock>
+
+</Accordion>
+
+## Combining Skills
+
+You can combine multiple skill blocks in a single `CLAUDE.md` or `.cursorrules` file. For most projects, the **Full Oxidoc Skill** is all you need. Use the focused skills when you want to keep the agent's context lean.
+
+<Callout kind="tip" title="Keep it updated">
+When you upgrade Oxidoc, check this page for updated skill prompts. New components and config options get added to the skills as they ship.
+</Callout>

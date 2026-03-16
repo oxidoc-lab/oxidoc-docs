@@ -1,0 +1,34 @@
+---
+title: Analytics — Google Analytics and Custom Scripts | Oxidoc
+description: Add analytics to your Oxidoc site. Configure Google Analytics with one line, or inject custom scripts for Plausible, Fathom, Umami, and other providers.
+---
+
+# Analytics
+
+Oxidoc supports Google Analytics and custom analytics scripts.
+
+## Google Analytics
+
+Add your measurement ID:
+
+<CodeBlock language="toml" filename="oxidoc.toml">
+[analytics]
+google_analytics = "G-XXXXXXXXXX"
+</CodeBlock>
+
+Oxidoc injects the Google Analytics gtag.js snippet into every page.
+
+## Custom Script
+
+For other analytics providers (Plausible, Fathom, Umami, etc.), inject a custom script tag:
+
+<CodeBlock language="toml" filename="oxidoc.toml">
+[analytics]
+script = '<script defer data-domain="example.com" src="https://plausible.io/js/script.js"></script>'
+</CodeBlock>
+
+The `script` value is injected directly into the `<head>` of every page. You can use any analytics provider that works via a script tag.
+
+## Using Both
+
+You can set both `google_analytics` and `script` if needed — both will be injected.

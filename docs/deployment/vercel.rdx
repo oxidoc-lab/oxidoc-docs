@@ -1,5 +1,6 @@
 ---
-title: Vercel
+title: Deploy to Vercel — Instant Deploys with Preview URLs | Oxidoc
+description: Deploy your Oxidoc site to Vercel. Instant deployments, preview URLs for pull requests, and zero-config build setup.
 ---
 
 # Vercel
@@ -18,7 +19,7 @@ Set the following in the project settings:
 
 | Setting | Value |
 |:--------|:------|
-| **Build Command** | `cargo install oxidoc-cli && oxidoc build` |
+| **Build Command** | `curl -fsSL https://raw.githubusercontent.com/oxidoc-lab/oxidoc/main/install.sh | sh && oxidoc build` |
 | **Output Directory** | `dist` |
 | **Install Command** | _(leave empty)_ |
 
@@ -31,5 +32,5 @@ Click **Deploy**. Vercel will build and deploy your site. Every push to `main` t
 </Steps>
 
 <Callout kind="info" title="Build cache">
-Vercel caches the Cargo install. Subsequent builds are faster since `oxidoc-cli` is already compiled.
+The install script downloads a pre-built binary, so builds are fast without any compilation step.
 </Callout>

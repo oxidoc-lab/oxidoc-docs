@@ -1,0 +1,84 @@
+---
+title: AI-Ready Output — llms.txt, Embeddings, and RAG | Oxidoc
+description: Oxidoc auto-generates llms.txt, llms-full.txt, and pre-computed embeddings so AI tools, LLMs, and RAG pipelines can consume your documentation out of the box.
+---
+
+# AI-Ready Output
+
+Every `oxidoc build` generates machine-readable files that make your documentation consumable by AI tools, LLMs, and RAG pipelines — with zero configuration.
+
+## What Gets Generated
+
+### llms.txt
+
+A lightweight index of every page — title and URL, one per line:
+
+<CodeBlock language="text" filename="dist/llms.txt">
+- /docs/installation: Install Oxidoc
+- /docs/quickstart: Quickstart
+- /docs/configuration: Configuration Reference
+- /docs/components: Built-in Components
+- /docs/search: Search
+</CodeBlock>
+
+AI tools use this to understand what your docs cover and which page to fetch for a given question.
+
+### llms-full.txt
+
+The complete plain text content of every page, separated by `---` markers:
+
+<CodeBlock language="text" filename="dist/llms-full.txt">
+---
+# Install Oxidoc (docs/installation)
+
+The recommended way to install Oxidoc is the install script...
+
+---
+# Quickstart (docs/quickstart)
+
+Go from zero to a running documentation site in under five minutes...
+</CodeBlock>
+
+This is the file AI tools ingest when they need full context. A single fetch gives the LLM your entire documentation in a format optimized for comprehension.
+
+## Zero Configuration
+
+Both files are generated automatically on every `oxidoc build`. No config flags, no opt-in — they're always there in `dist/`.
+
+## How AI Tools Use These Files
+
+| Tool | How it uses llms.txt |
+|:-----|:---------------------|
+| ChatGPT / Claude | Users paste `llms-full.txt` as context to ask questions about your project |
+| Cursor / Codex | Agents fetch the file to understand your API before writing code |
+| RAG pipelines | Index `llms-full.txt` as a document source for retrieval |
+| AI search | Use `llms.txt` as a sitemap for selective page fetching |
+
+<Callout kind="tip" title="Link it from your README">
+Add a note in your project README pointing AI users to your `llms.txt` URL. For example: `https://your-docs-site.com/llms-full.txt`
+</Callout>
+
+## The llms.txt Standard
+
+The `llms.txt` format is an emerging convention for making websites machine-readable. By generating these files automatically, Oxidoc ensures your documentation is ready for the AI-native web without any extra work from you.
+
+Other documentation tools require plugins or manual setup. Oxidoc does it out of the box.
+
+## Pre-Computed Embeddings
+
+When [semantic search](/docs/search/semantic) is enabled (`semantic = true`), Oxidoc also generates `search-vectors.json` — a JSON file containing a 384-dimensional embedding vector for every page, along with full metadata (title, path, text, heading positions).
+
+This file is a portable artifact you can feed directly into any vector database (ChromaDB, Pinecone, Weaviate, Qdrant) or custom RAG pipeline.
+
+See [Semantic Search > Embedding Output Format](/docs/search/semantic#embedding-output-format) for the schema and code examples in Python and JavaScript.
+
+## All AI Output Files
+
+| File | Always Generated | Description |
+|:-----|:-----------------|:------------|
+| `llms.txt` | Yes | Page index — title and URL per line |
+| `llms-full.txt` | Yes | Full plain text of all pages |
+| `search-vectors.json` | When `semantic = true` | Pre-computed embedding vectors + metadata |
+| `search-model.gguf` | When `semantic = true` | The GGUF embedding model (for re-embedding queries) |
+
+Together, these files make your documentation fully RAG-ready. Users can build custom AI assistants that understand your project without scraping HTML or parsing Markdown.

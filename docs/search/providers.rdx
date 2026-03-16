@@ -1,0 +1,179 @@
+---
+title: External Search Providers — Algolia, Typesense, Meilisearch | Oxidoc
+description: Integrate external search providers with Oxidoc. Step-by-step setup for Algolia DocSearch, Typesense, Meilisearch, or bring your own custom search solution.
+---
+
+# External Search Providers
+
+Oxidoc's built-in search handles most documentation sites. For larger sites, existing infrastructure, or specific requirements, you can use an external search provider instead.
+
+When you set an external provider, Oxidoc skips generating the built-in search index and injects the provider's scripts and styles into your pages.
+
+## Algolia DocSearch
+
+[Algolia DocSearch](https://docsearch.algolia.com/) is a popular hosted search for documentation sites. It's free for open-source projects.
+
+<CodeBlock language="toml" filename="oxidoc.toml">
+[search]
+provider = "algolia"
+app_id = "YOUR_APP_ID"
+api_key = "YOUR_SEARCH_API_KEY"
+index_name = "your_index"
+</CodeBlock>
+
+| Field | Description |
+|:------|:------------|
+| `app_id` | Your Algolia application ID |
+| `api_key` | **Search-only** API key (never use your admin key) |
+| `index_name` | Name of the Algolia index to search |
+
+<Steps>
+<Step title="Apply for DocSearch">
+Go to [docsearch.algolia.com](https://docsearch.algolia.com/) and apply. Open-source projects get free indexing and hosting.
+</Step>
+<Step title="Get your credentials">
+After approval, Algolia provides your `app_id`, `api_key`, and `index_name`.
+</Step>
+<Step title="Configure oxidoc.toml">
+Add the credentials to your `[search]` config as shown above.
+</Step>
+<Step title="Build and deploy">
+Algolia's crawler indexes your deployed site automatically. Search works after the first crawl completes.
+</Step>
+</Steps>
+
+<Callout kind="warning" title="Search-only API key">
+Use the **search-only** API key in your config, not the admin key. The API key is visible in your site's HTML source. The search-only key can only read — it cannot modify your index.
+</Callout>
+
+## Typesense
+
+[Typesense](https://typesense.org/) is an open-source, typo-tolerant search engine you can self-host or use as a cloud service.
+
+<CodeBlock language="toml" filename="oxidoc.toml">
+[search]
+provider = "typesense"
+host = "your-typesense-host.com"
+port = 443
+protocol = "https"
+api_key = "YOUR_SEARCH_API_KEY"
+collection_name = "docs"
+</CodeBlock>
+
+| Field | Description |
+|:------|:------------|
+| `host` | Typesense server hostname |
+| `port` | Server port (typically 443 for HTTPS, 8108 for local) |
+| `protocol` | `"https"` or `"http"` |
+| `api_key` | Search-only API key |
+| `collection_name` | Name of the Typesense collection |
+
+<Steps>
+<Step title="Set up Typesense">
+Self-host with Docker or use [Typesense Cloud](https://cloud.typesense.org/).
+```bash
+docker run -p 8108:8108 -v /tmp/typesense-data:/data typesense/typesense:latest \
+  --data-dir /data --api-key=your-admin-key
+```
+</Step>
+<Step title="Create a collection and index your docs">
+Use the Typesense API or a scraper like [typesense-docsearch-scraper](https://github.com/typesense/typesense-docsearch-scraper) to index your built site.
+</Step>
+<Step title="Configure oxidoc.toml">
+Add your Typesense credentials as shown above. Use a search-only API key.
+</Step>
+</Steps>
+
+## Meilisearch
+
+[Meilisearch](https://www.meilisearch.com/) is an open-source, fast search engine with typo tolerance and filtering.
+
+<CodeBlock language="toml" filename="oxidoc.toml">
+[search]
+provider = "meilisearch"
+host = "https://your-meilisearch-host.com"
+api_key = "YOUR_SEARCH_API_KEY"
+index_name = "docs"
+</CodeBlock>
+
+| Field | Description |
+|:------|:------------|
+| `host` | Meilisearch instance URL (including protocol) |
+| `api_key` | Search-only API key |
+| `index_name` | Name of the Meilisearch index |
+
+<Steps>
+<Step title="Set up Meilisearch">
+Self-host with Docker or use [Meilisearch Cloud](https://www.meilisearch.com/cloud).
+```bash
+docker run -p 7700:7700 -v /tmp/meili-data:/meili_data getmeili/meilisearch:latest
+```
+</Step>
+<Step title="Index your docs">
+Use the Meilisearch API or [docs-scraper](https://github.com/meilisearch/docs-scraper) to index your built site.
+</Step>
+<Step title="Configure oxidoc.toml">
+Add your Meilisearch credentials as shown above.
+</Step>
+</Steps>
+
+## Custom Provider
+
+For any search service not listed above, inject your own CSS and JavaScript:
+
+<CodeBlock language="toml" filename="oxidoc.toml">
+[search]
+provider = "custom"
+stylesheet = "https://cdn.example.com/search.css"
+script = "https://cdn.example.com/search.js"
+init_script = "assets/js/search-init.js"
+</CodeBlock>
+
+| Field | Type | Description |
+|:------|:-----|:------------|
+| `stylesheet` | String | CSS file loaded in `<head>` via `<link>` tag |
+| `script` | String | JS file loaded at end of `<body>` via `<script>` tag |
+| `init_script` | String | Local JS file for initialization code (path relative to project root) |
+
+All three fields are optional — use the ones you need.
+
+### Example: Pagefind
+
+<CodeBlock language="toml" filename="oxidoc.toml">
+[search]
+provider = "custom"
+script = "/pagefind/pagefind-ui.js"
+stylesheet = "/pagefind/pagefind-ui.css"
+init_script = "assets/js/pagefind-init.js"
+</CodeBlock>
+
+<CodeBlock language="javascript" filename="assets/js/pagefind-init.js">
+new PagefindUI({
+  element: "#oxidoc-search-container",
+  showSubResults: true,
+});
+</CodeBlock>
+
+### Example: Custom Fetch-Based Search
+
+<CodeBlock language="javascript" filename="assets/js/search-init.js">
+const input = document.querySelector('.oxidoc-search-input');
+input?.addEventListener('input', async (e) => {
+  const query = e.target.value;
+  const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+  const results = await response.json();
+  // Render results into the search container
+});
+</CodeBlock>
+
+## Comparison
+
+| Feature | Built-in (Oxidoc) | Algolia | Typesense | Meilisearch | Custom |
+|:--------|:-------------------|:--------|:----------|:------------|:-------|
+| Setup | Zero config | Apply + credentials | Self-host or cloud | Self-host or cloud | Write JS |
+| Hosting | None (runs in browser) | Algolia Cloud | You or Typesense Cloud | You or Meili Cloud | You |
+| Cost | Free | Free (open source) | Free (self-host) | Free (self-host) | — |
+| Semantic search | Built-in | No | No | No | — |
+| Typo tolerance | Built-in | Built-in | Built-in | Built-in | — |
+| Index size limit | None | Plan-dependent | None (self-host) | None (self-host) | — |
+| Offline support | Yes (all client-side) | No (requires API) | No (requires API) | No (requires API) | — |
