@@ -156,7 +156,7 @@ description = "Site description for SEO"
 logo = "/assets/logo.svg"
 favicon = "/assets/favicon.svg"
 base_url = "https://example.com"
-edit_url = "https://github.com/org/repo/blob/main/docs"
+edit_url = "https://github.com/org/repo/blob/main"
 edit_label = "Edit this page"
 
 [theme]

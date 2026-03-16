@@ -192,7 +192,7 @@ Connect each page to its source for transparency and community contributions:
 
 <CodeBlock language="toml" filename="oxidoc.toml">
 [project]
-edit_url = "https://github.com/org/repo/blob/main/docs"
+edit_url = "https://github.com/org/repo/blob/main"
 edit_label = "Edit this page"
 </CodeBlock>
 
