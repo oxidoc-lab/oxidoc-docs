@@ -1,6 +1,6 @@
 # oxidoc-docs
 
-The official documentation site for [Oxidoc](https://github.com/oxidoc-lab/oxidoc), deployed at [oxidoc-lab.github.io](https://oxidoc-lab.github.io).
+The official documentation site for [Oxidoc](https://github.com/oxidoc-lab/oxidoc), deployed at [oxidoc.dev](https://oxidoc.dev).
 
 ## Development
 
