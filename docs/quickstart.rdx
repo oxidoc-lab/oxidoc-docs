@@ -10,7 +10,7 @@ Go from zero to a running documentation site in under five minutes.
 ## 1. Install Oxidoc
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/oxidoc-lab/oxidoc/main/install.sh | sh
+curl -fsSL https://oxidoc.dev/install.sh | sh
 ```
 
 See [Installation](/docs/installation) for other options.

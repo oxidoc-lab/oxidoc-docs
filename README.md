@@ -6,7 +6,7 @@ The official documentation site for [Oxidoc](https://github.com/oxidoc-lab/oxido
 
 ```bash
 # Install oxidoc
-curl -fsSL https://raw.githubusercontent.com/oxidoc-lab/oxidoc/main/install.sh | sh
+curl -fsSL https://oxidoc.dev/install.sh | sh
 
 # Start dev server
 oxidoc dev

@@ -333,7 +333,7 @@ Binary: `oxidoc` (single binary, no runtime deps)
 
 ## Install
 ```bash
-curl -fsSL https://raw.githubusercontent.com/oxidoc-lab/oxidoc/main/install.sh | sh
+curl -fsSL https://oxidoc.dev/install.sh | sh
 ```
 
 ## Commands
@@ -358,7 +358,7 @@ oxidoc set-version <ver>        Pin specific version
 
 ## CI Example (GitHub Actions)
 ```yaml
-- run: curl -fsSL https://raw.githubusercontent.com/oxidoc-lab/oxidoc/main/install.sh | sh
+- run: curl -fsSL https://oxidoc.dev/install.sh | sh
 - run: oxidoc build
 ```
 

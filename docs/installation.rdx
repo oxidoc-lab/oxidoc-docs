@@ -12,17 +12,17 @@ The recommended way to install Oxidoc is the install script, which detects your 
 <Tabs>
 <Tab title="Linux / macOS">
 ```bash
-curl -fsSL https://raw.githubusercontent.com/oxidoc-lab/oxidoc/main/install.sh | sh
+curl -fsSL https://oxidoc.dev/install.sh | sh
 ```
 </Tab>
 <Tab title="Windows (PowerShell)">
 ```powershell
-irm https://raw.githubusercontent.com/oxidoc-lab/oxidoc/main/install.ps1 | iex
+irm https://oxidoc.dev/install.ps1 | iex
 ```
 </Tab>
 </Tabs>
 
-The script installs the binary to `~/.oxidoc/bin/` by default and adds it to your `PATH`.
+The script detects your platform, downloads the correct binary, and adds it to your `PATH`.
 
 ### Custom Install Directory
 
@@ -30,7 +30,7 @@ Set `OXIDOC_INSTALL_DIR` to change the install location:
 
 ```bash
 OXIDOC_INSTALL_DIR=/usr/local/bin \
-  curl -fsSL https://raw.githubusercontent.com/oxidoc-lab/oxidoc/main/install.sh | sh
+  curl -fsSL https://oxidoc.dev/install.sh | sh
 ```
 
 ## GitHub Releases
