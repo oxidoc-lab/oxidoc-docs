@@ -16,10 +16,15 @@ jobs:
       - uses: actions/checkout@v5
 
       - name: Install Oxidoc
-        run: curl -fsSL https://raw.githubusercontent.com/oxidoc-lab/oxidoc/main/install.sh | sh
+        run: curl -fsSL https://raw.githubusercontent.com/oxidoc-lab/oxidoc/main/scripts/install.sh | sh
 
       - name: Build site
         run: oxidoc build
+
+      - name: Add install scripts
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/oxidoc-lab/oxidoc/main/scripts/install.sh -o dist/install.sh
+          curl -fsSL https://raw.githubusercontent.com/oxidoc-lab/oxidoc/main/scripts/install.ps1 -o dist/install.ps1
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4
