@@ -1,8 +1,8 @@
 [project]
 name = "Oxidoc"
-description = "A documentation engine written in Rust. Zero Node.js. Sub-second builds. Interactive Wasm islands."
+description = "A documentation engine written in Rust. Zero Node.js. Interactive Wasm islands."
 logo = "/assets/logo.svg"
-base_url = "https://oxidoc-lab.github.io"
+base_url = "https://oxidoc.dev"
 edit_url = "https://github.com/oxidoc-lab/oxidoc-docs/blob/main/docs"
 
 [theme]
@@ -11,7 +11,6 @@ dark_mode = "system"
 
 [routing.root]
 homepage = "home.rdx"
-# pages = ["about.rdx", "contact.rdx"]
 
 [routing]
 header_links = [
@@ -22,14 +21,40 @@ header_links = [
 navigation = [
   { path = "/docs", dir = "docs", groups = [
     { group = "Getting Started", pages = [
+      "installation",
       "quickstart",
-      "api-reference",
-      "advanced",
+      "writing-content",
     ] },
-    { group = "Guides", pages = [
-      "guides/styling",
+    { group = "Core", pages = [
+      "configuration",
+      "cli",
+      "components",
+      "components/landing-page",
+    ] },
+    { group = "Search", pages = [
+      "search",
+      "search/lexical",
+      "search/semantic",
+      "search/providers",
+    ] },
+    { group = "Features", pages = [
+      "versioning",
+      "i18n",
+      "seo",
+      "analytics",
+      "theming",
+      "api-reference",
+    ] },
+    { group = "Advanced", pages = [
       "guides/animations",
       "guides/custom-components",
+      "guides/troubleshooting",
+    ] },
+    { group = "AI", pages = [
+      "ai/llms-txt",
+      "ai/custom-models",
+      "ai/embedding-export",
+      "ai/agent-skills",
     ] },
     { group = "Deployment", pages = [
       "deployment",
@@ -57,4 +82,3 @@ discord = "https://discord.gg/CGHU4TR7Zb"
 
 [footer]
 copyright_owner = "Oxidoc"
-# copyright_owner_url = "https://github.com/oxidoc-lab"

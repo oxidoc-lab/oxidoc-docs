@@ -1,19 +1,20 @@
 ---
-title: Welcome to Oxidoc
+title: Oxidoc — Documentation Engine Built in Rust | Oxidoc
+description: Build fast, interactive documentation sites with Oxidoc. Zero Node.js, Wasm-powered components, and built-in search. Get started in under a minute.
 layout: landing
 ---
 
 <Hero title="Oxidoc">
-<HeroAction label="Get Started" href="/docs/quickstart" variant="primary" />
+<HeroAction label="Get Started" href="/docs/installation" variant="primary" />
 <HeroAction label="View on GitHub" href="https://github.com/oxidoc-lab/oxidoc" variant="secondary" />
 
-A documentation engine written in Rust. Zero Node.js dependency. Sub-second builds. Interactive WebAssembly islands.
+A documentation engine written in Rust. Zero Node.js. Interactive WebAssembly islands.
 </Hero>
 
 <Section bg="muted">
 <FeatureGrid>
 <Feature icon="⚡" title="Fast Builds">
-Sub-second builds for thousands of pages with incremental rebuilds.
+Builds thousands of pages in seconds with incremental rebuilds.
 </Feature>
 <Feature icon="🧩" title="Interactive Islands">
 Wasm-powered components like tabs, code blocks, and API playgrounds.
