@@ -2,6 +2,7 @@
 name = "Oxidoc"
 description = "A documentation engine written in Rust. Zero Node.js. Interactive Wasm islands."
 logo = "/assets/logo.svg"
+favicon = "/assets/favicon.svg"
 base_url = "https://oxidoc.dev"
 edit_url = "https://github.com/oxidoc-lab/oxidoc-docs/blob/main/docs"
 

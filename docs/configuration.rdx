@@ -16,6 +16,7 @@ Core project metadata.
 name = "My Docs"
 description = "Documentation for my project"
 logo = "/assets/logo.svg"
+favicon = "/assets/favicon.svg"
 base_url = "https://example.com"
 edit_url = "https://github.com/org/repo/blob/main/docs"
 edit_label = "Edit this page"
@@ -27,6 +28,7 @@ debug_islands = false
 | `name` | String | **required** | Project name shown in header and metadata |
 | `description` | String | — | Site description for SEO and feeds |
 | `logo` | String | — | Path to logo image (relative to assets) |
+| `favicon` | String | — | Path to favicon (`.ico`, `.svg`, or `.png`) |
 | `base_url` | String | — | Full base URL for sitemap, feeds, and canonical links |
 | `edit_url` | String | — | Base URL for "edit this page" links (e.g. GitHub blob URL) |
 | `edit_label` | String | `"View page source"` | Label for the edit/source link on each page |
