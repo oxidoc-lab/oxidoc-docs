@@ -1,5 +1,5 @@
 ---
-title: Custom Embedding Models — Use Your Own GGUF Model | Oxidoc
+title: Custom Embedding Models — Use Your Own GGUF Model 
 description: Replace Oxidoc's default search model with your own GGUF sentence embeddings. Optimize for your language, domain, or performance requirements.
 ---
 

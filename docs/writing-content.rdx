@@ -1,5 +1,5 @@
 ---
-title: Writing Content — RDX Syntax and File Organization | Oxidoc
+title: Writing Content - RDX Syntax and File Organization 
 description: Learn RDX, Oxidoc's content format. Write Markdown with embedded components, configure frontmatter, organize files, and create Mermaid diagrams.
 ---
 
@@ -43,7 +43,8 @@ Every `.rdx` file starts with YAML frontmatter between `---` fences:
 
 ```yaml
 ---
-title: Page Title
+title: Page Title — Long Descriptive Title for SEO
+short_title: Page Title
 description: Optional meta description for SEO
 layout: landing
 ---
@@ -51,7 +52,8 @@ layout: landing
 
 | Field | Required | Description |
 |:------|:---------|:------------|
-| `title` | Yes | Page title, used in sidebar and browser tab |
+| `title` | Yes | Full page title — shown in the browser tab and top bar |
+| `short_title` | No | Short title shown in the sidebar navigation. Falls back to the filename if omitted |
 | `description` | No | Meta description for SEO and search snippets |
 | `layout` | No | Set to `landing` for full-width landing pages (no sidebar/TOC) |
 

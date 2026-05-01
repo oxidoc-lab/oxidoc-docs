@@ -1,5 +1,5 @@
 ---
-title: Deploy to Netlify — Continuous Deployment with Previews | Oxidoc
+title: Deploy to Netlify — Continuous Deployment with Previews 
 description: Deploy your Oxidoc site to Netlify. Continuous deployment from Git, branch previews, and configuration via netlify.toml.
 ---
 

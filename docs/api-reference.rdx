@@ -1,5 +1,5 @@
 ---
-title: API Reference — OpenAPI Integration Guide | Oxidoc
+title: API Reference — OpenAPI Integration Guide 
 description: Generate interactive API documentation from OpenAPI specs. Auto-generated parameter tables, response schemas, and a live Wasm-powered API playground.
 ---
 

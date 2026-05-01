@@ -1,5 +1,5 @@
 ---
-title: Internationalization (i18n) — Multi-Locale Documentation | Oxidoc
+title: Internationalization (i18n) — Multi-Locale Documentation 
 description: Set up multi-language documentation with Oxidoc. Configure locales, write Fluent translation files, and add a locale switcher — supports 25+ languages.
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: Writing Manual API Docs — Hand-Crafted References | Oxidoc
+title: Writing Manual API Docs - Hand-Crafted References 
 description: Learn how to write manual API documentation in Oxidoc using RDX components. Create structured reference pages with code examples and parameter tables.
 ---
 
@@ -20,7 +20,7 @@ Create a new user account.
 **Parameters**
 
 | Parameter | Type | Required | Description |
-|:----------|:-----|:---------|:------------|
+|:----------|:-----|:---------|:------------| 
 | `name` | string | Yes | The user's display name |
 | `email` | string | Yes | Email address |
 | `role` | string | No | Role assignment (default: `"member"`) |

@@ -1,5 +1,5 @@
 ---
-title: Search — Built-in Hybrid Search Engine | Oxidoc
+title: Search - Built-in Hybrid Search Engine 
 description: Oxidoc ships a production-grade search engine running in-browser via Wasm. BM25 lexical search works with zero config. Add semantic search with one line.
 ---
 

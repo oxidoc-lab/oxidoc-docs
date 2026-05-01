@@ -1,5 +1,5 @@
 ---
-title: Semantic Search — AI-Powered Conceptual Search | Oxidoc
+title: Semantic Search — AI-Powered Conceptual Search 
 description: Enable semantic search in Oxidoc to understand the meaning behind queries. Uses sentence embeddings and cosine similarity — runs in-browser via Wasm, no API keys.
 ---
 

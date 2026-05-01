@@ -1,5 +1,5 @@
 ---
-title: "Embedding Export — Export Embeddings for RAG Pipelines | Oxidoc"
+title: "Embedding Export — Export Embeddings for RAG Pipelines "
 description: "Generate and export documentation embeddings in JSON, JSONL, NumPy, Safetensors, or Parquet format. Build custom RAG chatbots and AI search from your docs."
 ---
 

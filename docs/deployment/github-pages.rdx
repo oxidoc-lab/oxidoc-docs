@@ -1,5 +1,5 @@
 ---
-title: Deploy to GitHub Pages — Free Hosting with CI/CD | Oxidoc
+title: Deploy to GitHub Pages — Free Hosting with CI/CD 
 description: Deploy your Oxidoc site to GitHub Pages with GitHub Actions. Free hosting, automatic builds on push, and custom domain support.
 ---
 

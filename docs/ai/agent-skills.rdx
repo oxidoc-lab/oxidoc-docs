@@ -1,5 +1,5 @@
 ---
-title: Oxidoc Skills for AI Agents — Claude, Codex, Cursor | Oxidoc
+title: Oxidoc Skills for AI Agents — Claude, Codex, Cursor 
 description: Ready-made skill files to teach AI coding agents how to use Oxidoc. Works with Claude Code, Codex, Cursor, Windsurf, and any LLM-powered tool that supports the Agent Skills standard.
 ---
 
@@ -213,7 +213,7 @@ navigation = [
 | `[analytics]` | google_analytics, script |
 | `[redirects]` | redirects `[{from, to}]` |
 | `[components.custom]` | `TagName = "path/to/file.js"` |
-| `[attribution]` | oxidoc (bool, default true) |
+| `[attribution]`  (bool, default true) |
 
 ### Navigation Rules
 
@@ -455,7 +455,7 @@ navigation = [
 | `[analytics]` | google_analytics, script |
 | `[redirects]` | redirects `[{from, to}]` |
 | `[components.custom]` | `TagName = "path/to/file.js"` |
-| `[attribution]` | oxidoc (bool, default true) |
+| `[attribution]`  (bool, default true) |
 
 ### Search Providers
 

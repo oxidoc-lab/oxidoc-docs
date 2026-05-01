@@ -1,5 +1,5 @@
 ---
-title: Lexical Search — BM25 Full-Text Search Engine | Oxidoc
+title: Lexical Search — BM25 Full-Text Search Engine 
 description: Oxidoc's built-in BM25 search engine with fuzzy matching, phrase boost, section-level results, and lazy chunk loading. Works with zero configuration.
 ---
 

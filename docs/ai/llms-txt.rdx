@@ -1,5 +1,5 @@
 ---
-title: AI-Ready Output — llms.txt, Embeddings, and RAG | Oxidoc
+title: AI-Ready Output — llms.txt, Embeddings, and RAG 
 description: Oxidoc auto-generates llms.txt, llms-full.txt, and pre-computed embeddings so AI tools, LLMs, and RAG pipelines can consume your documentation out of the box.
 ---
 
